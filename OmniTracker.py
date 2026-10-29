@@ -1,7 +1,7 @@
 import sys
 from io import StringIO
 import datetime as dt
-from PyQt6.QtWidgets import QMainWindow, QApplication, QMenuBar, QLabel
+from PyQt6.QtWidgets import QMainWindow, QApplication, QMenuBar
 from PyQt6 import uic
 
 
@@ -16,6 +16,10 @@ class OmniTracker(QMainWindow):
         self.setWindowTitle('OmniTracker')
         self.todays_date = dt.date.today()
         self.general_open()
+
+        self.todo_plus.hide()
+        self.diary_plus.hide()
+        self.schedule_plus.hide()
 
         self.todo.move(0, 0)
         self.diary.move(0, 0)
@@ -51,7 +55,14 @@ class OmniTracker(QMainWindow):
         self.schedulebtn_todo.clicked.connect(self.schedule_open)
         self.schedulebtn_diary.clicked.connect(self.schedule_open)
 
+        self.plus_btn.clicked.connect(self.plus)
 
+        self.todo_plus.clicked.connect(self.todo_open_plus)
+        self.diary_plus.clicked.connect(self.diary_open_plus)
+        self.schedule_plus.clicked.connect(self.schedule_open_plus)
+
+    # ---------------------------Функции открывашки--------------------------------
+    # TODO: сделать так, чтобы открывали другие вкладки
     def general_open(self):
         self.general.show()  # показываем только глав панель
         self.todo.hide()
@@ -59,6 +70,11 @@ class OmniTracker(QMainWindow):
         self.schedule.hide()
         self.results.hide()
         self.settings.hide()
+
+        self.todo_plus.hide()
+        self.diary_plus.hide()
+        self.schedule_plus.hide()
+
         self.date.setText(f'{self.todays_date}')
 
     def todo_open(self):
@@ -93,6 +109,7 @@ class OmniTracker(QMainWindow):
         self.results.show()  # показываем только результаты
         self.settings.hide()
 
+
     def settings_open(self):
         self.general.hide()
         self.todo.hide()
@@ -100,6 +117,32 @@ class OmniTracker(QMainWindow):
         self.schedule.hide()
         self.results.hide()
         self.settings.show()  # показываем только настройки
+
+        self.todo_plus.hide()
+        self.diary_plus.hide()
+        self.schedule_plus.hide()
+
+    def plus(self):
+        self.todo_plus.show()
+        self.diary_plus.show()
+        self.schedule_plus.show()
+
+    def todo_open_plus(self):
+        self.general.hide()
+        self.todo.show()
+
+    def diary_open_plus(self):
+        self.general.hide()
+        self.diary.show()
+
+    def schedule_open_plus(self):
+        self.general.hide()
+        self.schedule.show()
+
+    # -----------------------------Функции для добавления задач----------------------
+
+    def todo_add(self):
+        ...
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
