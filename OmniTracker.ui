@@ -17,8 +17,8 @@
    <widget class="QGroupBox" name="general">
     <property name="geometry">
      <rect>
-      <x>-10</x>
-      <y>-20</y>
+      <x>0</x>
+      <y>0</y>
       <width>791</width>
       <height>621</height>
      </rect>
@@ -88,7 +88,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <widget class="QPushButton" name="plus_btn">
      <property name="geometry">
       <rect>
-       <x>370</x>
+       <x>366</x>
        <y>545</y>
        <width>61</width>
        <height>71</height>
@@ -175,6 +175,50 @@ li.checked::marker { content: &quot;\2612&quot;; }
 }</string>
      </property>
     </widget>
+    <widget class="QPushButton" name="todo_plus">
+     <property name="geometry">
+      <rect>
+       <x>285</x>
+       <y>510</y>
+       <width>71</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Задачник</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="diary_plus">
+     <property name="geometry">
+      <rect>
+       <x>357</x>
+       <y>450</y>
+       <width>81</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Ежедневник</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="schedule_plus">
+     <property name="geometry">
+      <rect>
+       <x>435</x>
+       <y>510</y>
+       <width>91</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>8</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Планировщик</string>
+     </property>
+    </widget>
     <zorder>listView_2</zorder>
     <zorder>verticalLayoutWidget_2</zorder>
     <zorder>phylosophy_label</zorder>
@@ -183,6 +227,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <zorder>verticalLayoutWidget</zorder>
     <zorder>label_5</zorder>
     <zorder>date</zorder>
+    <zorder>todo_plus</zorder>
+    <zorder>diary_plus</zorder>
+    <zorder>schedule_plus</zorder>
    </widget>
    <widget class="QGroupBox" name="todo">
     <property name="geometry">
