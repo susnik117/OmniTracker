@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>2529</width>
-    <height>1385</height>
+    <height>3500</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,9 +29,9 @@
     <widget class="QLabel" name="date">
      <property name="geometry">
       <rect>
-       <x>380</x>
+       <x>370</x>
        <y>190</y>
-       <width>31</width>
+       <width>81</width>
        <height>16</height>
       </rect>
      </property>
@@ -109,7 +109,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <widget class="QListWidget" name="today_list">
      <property name="geometry">
       <rect>
-       <x>280</x>
+       <x>285</x>
        <y>160</y>
        <width>241</width>
        <height>381</height>
@@ -187,8 +187,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
    <widget class="QGroupBox" name="todo">
     <property name="geometry">
      <rect>
-      <x>830</x>
-      <y>-20</y>
+      <x>0</x>
+      <y>690</y>
       <width>791</width>
       <height>621</height>
      </rect>
@@ -199,7 +199,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <widget class="QLabel" name="label">
      <property name="geometry">
       <rect>
-       <x>240</x>
+       <x>198</x>
        <y>60</y>
        <width>391</width>
        <height>71</height>
@@ -232,7 +232,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <string>Название:</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton">
+    <widget class="QPushButton" name="addtbn_todo">
      <property name="geometry">
       <rect>
        <x>50</x>
@@ -279,93 +279,6 @@ li.checked::marker { content: &quot;\2612&quot;; }
      </property>
      <layout class="QGridLayout" name="gridLayout"/>
     </widget>
-    <widget class="QGroupBox" name="exsisting_tasks">
-     <property name="geometry">
-      <rect>
-       <x>370</x>
-       <y>110</y>
-       <width>421</width>
-       <height>521</height>
-      </rect>
-     </property>
-     <property name="title">
-      <string/>
-     </property>
-     <widget class="QListWidget" name="exist_tasks">
-      <property name="geometry">
-       <rect>
-        <x>237</x>
-        <y>29</y>
-        <width>185</width>
-        <height>425</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButton_2">
-      <property name="geometry">
-       <rect>
-        <x>240</x>
-        <y>430</y>
-        <width>61</width>
-        <height>81</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Задачник</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButton_3">
-      <property name="geometry">
-       <rect>
-        <x>300</x>
-        <y>450</y>
-        <width>61</width>
-        <height>61</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>7</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>Ежедневник</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButton_5">
-      <property name="geometry">
-       <rect>
-        <x>360</x>
-        <y>450</y>
-        <width>61</width>
-        <height>61</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>6</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>Планировщик</string>
-      </property>
-     </widget>
-     <widget class="QListWidget" name="tasks_criterions">
-      <property name="geometry">
-       <rect>
-        <x>40</x>
-        <y>28</y>
-        <width>201</width>
-        <height>485</height>
-       </rect>
-      </property>
-     </widget>
-     <zorder>exist_tasks</zorder>
-     <zorder>tasks_criterions</zorder>
-     <zorder>pushButton_2</zorder>
-     <zorder>pushButton_3</zorder>
-     <zorder>pushButton_5</zorder>
-    </widget>
     <widget class="QListView" name="listView_4">
      <property name="geometry">
       <rect>
@@ -386,25 +299,112 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <rect>
        <x>150</x>
        <y>190</y>
-       <width>221</width>
+       <width>250</width>
        <height>31</height>
       </rect>
      </property>
     </widget>
+    <widget class="QGroupBox" name="exsisting_tasks">
+     <property name="geometry">
+      <rect>
+       <x>409</x>
+       <y>149</y>
+       <width>421</width>
+       <height>521</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string/>
+     </property>
+     <widget class="QListWidget" name="exist_tasks">
+      <property name="geometry">
+       <rect>
+        <x>197</x>
+        <y>1</y>
+        <width>187</width>
+        <height>425</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="todobtn_todo">
+      <property name="geometry">
+       <rect>
+        <x>198</x>
+        <y>400</y>
+        <width>65</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Задачник</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="diarybtn_todo">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>420</y>
+        <width>63</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>7</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Ежедневник</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="schedulebtn_todo">
+      <property name="geometry">
+       <rect>
+        <x>320</x>
+        <y>420</y>
+        <width>63</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>6</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Планировщик</string>
+      </property>
+     </widget>
+     <widget class="QListWidget" name="tasks_criterions">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>1</y>
+        <width>201</width>
+        <height>485</height>
+       </rect>
+      </property>
+     </widget>
+     <zorder>exist_tasks</zorder>
+     <zorder>tasks_criterions</zorder>
+     <zorder>todobtn_todo</zorder>
+     <zorder>diarybtn_todo</zorder>
+     <zorder>schedulebtn_todo</zorder>
+    </widget>
     <zorder>listView_4</zorder>
     <zorder>label</zorder>
     <zorder>label_2</zorder>
-    <zorder>pushButton</zorder>
+    <zorder>addtbn_todo</zorder>
     <zorder>checkBox</zorder>
     <zorder>gridLayoutWidget</zorder>
-    <zorder>exsisting_tasks</zorder>
     <zorder>name_todo</zorder>
+    <zorder>exsisting_tasks</zorder>
    </widget>
    <widget class="QGroupBox" name="diary">
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>680</y>
+      <y>1400</y>
       <width>791</width>
       <height>621</height>
      </rect>
@@ -415,8 +415,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <widget class="QLabel" name="label_3">
      <property name="geometry">
       <rect>
-       <x>160</x>
-       <y>40</y>
+       <x>178</x>
+       <y>60</y>
        <width>421</width>
        <height>71</height>
       </rect>
@@ -448,7 +448,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <string>Выбрать уже существующую задачу</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_4">
+    <widget class="QPushButton" name="addbtn_diary">
      <property name="geometry">
       <rect>
        <x>50</x>
@@ -495,13 +495,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <string>Название:</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_8">
+    <widget class="QPushButton" name="schedulebtn_diary">
      <property name="geometry">
       <rect>
-       <x>730</x>
-       <y>560</y>
-       <width>61</width>
-       <height>61</height>
+       <x>728</x>
+       <y>570</y>
+       <width>63</width>
+       <height>63</height>
       </rect>
      </property>
      <property name="font">
@@ -517,32 +517,32 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <property name="geometry">
       <rect>
        <x>605</x>
-       <y>139</y>
-       <width>191</width>
+       <y>149</y>
+       <width>187</width>
        <height>425</height>
       </rect>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_6">
+    <widget class="QPushButton" name="todobtn_diary">
      <property name="geometry">
       <rect>
-       <x>610</x>
-       <y>560</y>
-       <width>61</width>
-       <height>61</height>
+       <x>606</x>
+       <y>570</y>
+       <width>65</width>
+       <height>63</height>
       </rect>
      </property>
      <property name="text">
       <string>Задачник</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_7">
+    <widget class="QPushButton" name="diarybtn_diary">
      <property name="geometry">
       <rect>
-       <x>670</x>
-       <y>540</y>
-       <width>61</width>
-       <height>81</height>
+       <x>668</x>
+       <y>550</y>
+       <width>63</width>
+       <height>83</height>
       </rect>
      </property>
      <property name="font">
@@ -574,7 +574,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <rect>
        <x>150</x>
        <y>190</y>
-       <width>271</width>
+       <width>250</width>
        <height>31</height>
       </rect>
      </property>
@@ -582,20 +582,20 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <zorder>listView_5</zorder>
     <zorder>label_3</zorder>
     <zorder>checkBox_2</zorder>
-    <zorder>pushButton_4</zorder>
+    <zorder>addbtn_diary</zorder>
     <zorder>gridLayoutWidget_2</zorder>
     <zorder>label_4</zorder>
     <zorder>exist_tasks_2</zorder>
-    <zorder>pushButton_6</zorder>
-    <zorder>pushButton_7</zorder>
-    <zorder>pushButton_8</zorder>
+    <zorder>todobtn_diary</zorder>
+    <zorder>diarybtn_diary</zorder>
+    <zorder>schedulebtn_diary</zorder>
     <zorder>name_diary</zorder>
    </widget>
    <widget class="QGroupBox" name="schedule">
     <property name="geometry">
      <rect>
-      <x>900</x>
-      <y>680</y>
+      <x>0</x>
+      <y>2030</y>
       <width>791</width>
       <height>621</height>
      </rect>
@@ -621,142 +621,6 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <string>ПЛАНИРОВЩИК</string>
      </property>
     </widget>
-    <widget class="QGroupBox" name="exsisting_tasks_2">
-     <property name="geometry">
-      <rect>
-       <x>370</x>
-       <y>110</y>
-       <width>421</width>
-       <height>521</height>
-      </rect>
-     </property>
-     <property name="title">
-      <string/>
-     </property>
-     <widget class="QListWidget" name="exist_tasks_3">
-      <property name="geometry">
-       <rect>
-        <x>237</x>
-        <y>29</y>
-        <width>185</width>
-        <height>425</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButton_10">
-      <property name="geometry">
-       <rect>
-        <x>240</x>
-        <y>450</y>
-        <width>61</width>
-        <height>61</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Задачник</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButton_11">
-      <property name="geometry">
-       <rect>
-        <x>300</x>
-        <y>450</y>
-        <width>61</width>
-        <height>61</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>7</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>Ежедневник</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButton_12">
-      <property name="geometry">
-       <rect>
-        <x>360</x>
-        <y>430</y>
-        <width>61</width>
-        <height>81</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>6</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>Планировщик</string>
-      </property>
-     </widget>
-     <widget class="QListWidget" name="tasks_criterions_2">
-      <property name="geometry">
-       <rect>
-        <x>40</x>
-        <y>29</y>
-        <width>201</width>
-        <height>432</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButton_9">
-      <property name="geometry">
-       <rect>
-        <x>40</x>
-        <y>360</y>
-        <width>191</width>
-        <height>61</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>20</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>ДОБАВИТЬ</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="checkBox_3">
-      <property name="geometry">
-       <rect>
-        <x>50</x>
-        <y>410</y>
-        <width>241</width>
-        <height>61</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>7</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>Выбрать уже существующую задачу</string>
-      </property>
-     </widget>
-     <widget class="QTimeEdit" name="timeEdit">
-      <property name="geometry">
-       <rect>
-        <x>60</x>
-        <y>471</y>
-        <width>181</width>
-        <height>41</height>
-       </rect>
-      </property>
-     </widget>
-     <zorder>exist_tasks_3</zorder>
-     <zorder>tasks_criterions_2</zorder>
-     <zorder>pushButton_9</zorder>
-     <zorder>checkBox_3</zorder>
-     <zorder>pushButton_10</zorder>
-     <zorder>pushButton_11</zorder>
-     <zorder>pushButton_12</zorder>
-     <zorder>timeEdit</zorder>
-    </widget>
     <widget class="QListView" name="listView_6">
      <property name="geometry">
       <rect>
@@ -777,7 +641,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <rect>
        <x>0</x>
        <y>580</y>
-       <width>431</width>
+       <width>411</width>
        <height>41</height>
       </rect>
      </property>
@@ -792,11 +656,479 @@ li.checked::marker { content: &quot;\2612&quot;; }
       </rect>
      </property>
     </widget>
+    <widget class="QGroupBox" name="exsisting_tasks_2">
+     <property name="geometry">
+      <rect>
+       <x>410</x>
+       <y>149</y>
+       <width>421</width>
+       <height>481</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string/>
+     </property>
+     <widget class="QListWidget" name="exist_tasks_3">
+      <property name="geometry">
+       <rect>
+        <x>197</x>
+        <y>1</y>
+        <width>185</width>
+        <height>425</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="todobtn_schedule">
+      <property name="geometry">
+       <rect>
+        <x>198</x>
+        <y>420</y>
+        <width>65</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Задачник</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="diarybtn_schedule">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>420</y>
+        <width>63</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>7</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Ежедневник</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="schedulebtn_schedule">
+      <property name="geometry">
+       <rect>
+        <x>320</x>
+        <y>393</y>
+        <width>63</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>6</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Планировщик</string>
+      </property>
+     </widget>
+     <widget class="QListWidget" name="tasks_criterions_2">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>1</y>
+        <width>201</width>
+        <height>423</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="addbtn_schedule">
+      <property name="geometry">
+       <rect>
+        <x>5</x>
+        <y>323</y>
+        <width>191</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>20</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>ДОБАВИТЬ</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox_3">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>373</y>
+        <width>241</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>7</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Выбрать уже существующую задачу</string>
+      </property>
+     </widget>
+     <widget class="QTimeEdit" name="timeEdit">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>431</y>
+        <width>201</width>
+        <height>41</height>
+       </rect>
+      </property>
+     </widget>
+     <zorder>exist_tasks_3</zorder>
+     <zorder>tasks_criterions_2</zorder>
+     <zorder>addbtn_schedule</zorder>
+     <zorder>checkBox_3</zorder>
+     <zorder>todobtn_schedule</zorder>
+     <zorder>diarybtn_schedule</zorder>
+     <zorder>schedulebtn_schedule</zorder>
+     <zorder>timeEdit</zorder>
+    </widget>
     <zorder>listView_6</zorder>
     <zorder>label_7</zorder>
-    <zorder>exsisting_tasks_2</zorder>
     <zorder>name_schedule</zorder>
     <zorder>calendarWidget</zorder>
+    <zorder>exsisting_tasks_2</zorder>
+   </widget>
+   <widget class="QGroupBox" name="results">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>2700</y>
+      <width>791</width>
+      <height>621</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string/>
+    </property>
+    <widget class="QLabel" name="label_8">
+     <property name="geometry">
+      <rect>
+       <x>198</x>
+       <y>60</y>
+       <width>391</width>
+       <height>71</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>48</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>РЕЗУЛЬТАТЫ</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_9">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>180</y>
+       <width>161</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>20</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Название:</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="addtbn_todo_2">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>520</y>
+       <width>191</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>20</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>ДОБАВИТЬ</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="checkBox_4">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>450</y>
+       <width>291</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Выбрать уже существующую задачу</string>
+     </property>
+    </widget>
+    <widget class="QWidget" name="gridLayoutWidget_3">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>230</y>
+       <width>281</width>
+       <height>201</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4"/>
+    </widget>
+    <widget class="QListView" name="listView_7">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>150</y>
+       <width>791</width>
+       <height>471</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QListView {
+    background-color: #666;
+}</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_10">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>310</y>
+       <width>711</width>
+       <height>181</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>36</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>(Возможно, здесь будет график)</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="grapgh_type">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>170</y>
+       <width>121</width>
+       <height>41</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="grapgh_date">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>230</y>
+       <width>151</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_11">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>170</y>
+       <width>71</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>График:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_12">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>230</y>
+       <width>71</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Дата:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_13">
+     <property name="geometry">
+      <rect>
+       <x>240</x>
+       <y>230</y>
+       <width>301</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>(Заполнять в формате ДД.ММ.ГГГГ)</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="settings">
+    <property name="geometry">
+     <rect>
+      <x>830</x>
+      <y>2700</y>
+      <width>791</width>
+      <height>621</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string/>
+    </property>
+    <widget class="QLabel" name="label_14">
+     <property name="geometry">
+      <rect>
+       <x>198</x>
+       <y>60</y>
+       <width>391</width>
+       <height>71</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>48</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>НАСТРОЙКИ</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_15">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>180</y>
+       <width>161</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>20</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Название:</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="addtbn_todo_3">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>520</y>
+       <width>191</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>20</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>ДОБАВИТЬ</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="checkBox_5">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>450</y>
+       <width>291</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Выбрать уже существующую задачу</string>
+     </property>
+    </widget>
+    <widget class="QWidget" name="gridLayoutWidget_4">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>230</y>
+       <width>281</width>
+       <height>201</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_5"/>
+    </widget>
+    <widget class="QListView" name="listView_8">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>150</y>
+       <width>791</width>
+       <height>471</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QListView {
+    background-color: #666;
+}</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_16">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>310</y>
+       <width>781</width>
+       <height>181</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>36</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>(Возможно, здесь будут настройки)</string>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
