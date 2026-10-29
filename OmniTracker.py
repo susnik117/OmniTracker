@@ -1,8 +1,9 @@
 import sys
 from io import StringIO
 import datetime as dt
-from PyQt6.QtWidgets import QMainWindow, QApplication, QMenuBar
+from PyQt6.QtWidgets import QMainWindow, QApplication, QMenuBar, QLabel
 from PyQt6 import uic
+
 
 class OmniTracker(QMainWindow):
     def __init__(self):
@@ -10,57 +11,95 @@ class OmniTracker(QMainWindow):
         with open('OmniTracker.ui', 'r', encoding='utf8') as f:
             ui_data = f.read()
             uic.loadUi(StringIO(ui_data), self)
-        self.setFixedHeight(640)
+        self.setFixedHeight(642)
         self.setFixedWidth(791)
         self.setWindowTitle('OmniTracker')
+        self.todays_date = dt.date.today()
+        self.general_open()
 
         self.todo.move(0, 0)
         self.diary.move(0, 0)
         self.schedule.move(0, 0)
+        self.results.move(0, 0)
+        self.settings.move(0, 0)
 
         # -------------Создание меню и действий---------------
         self.menu_bar = QMenuBar(self)
-        self.menu_bar.resize(100, 20)
+        self.menu = self.menu_bar.addMenu('Открыть')
 
-        self.main_menu = self.menu_bar.addAction('Главная панель')
-        self.todo_act = self.menu_bar.addAction('Задачник')
-        self.diary_act = self.menu_bar.addAction('Ежедневник')
-        self.schedule_act = self.menu_bar.addAction('Планировщик')
-        self.results_act = self.menu_bar.addAction('Результаты')
-        self.settings_act = self.menu_bar.addAction('Настройки')
+        self.general_menu = self.menu.addAction('Главная панель')
+        self.todo_act = self.menu.addAction('Задачник')
+        self.diary_act = self.menu.addAction('Ежедневник')
+        self.schedule_act = self.menu.addAction('Планировщик')
+        self.results_act = self.menu.addAction('Результаты')
+        self.settings_act = self.menu.addAction('Настройки')
 
         # --------------Привязка действий------------------------
 
-        self.main_menu.triggered.connect(self.main_open)
+        self.general_menu.triggered.connect(self.general_open)
         self.todo_act.triggered.connect(self.todo_open)
         self.diary_act.triggered.connect(self.diary_open)
         self.schedule_act.triggered.connect(self.schedule_open)
+        self.results_act.triggered.connect(self.results_open)
+        self.settings_act.triggered.connect(self.settings_open)
 
-        self.main_open()
+        # --------------Привязка кнопок---------------------
+        self.diarybtn_todo.clicked.connect(self.diary_open)
+        self.diarybtn_schedule.clicked.connect(self.diary_open)
+        self.todobtn_diary.clicked.connect(self.todo_open)
+        self.todobtn_schedule.clicked.connect(self.todo_open)
+        self.schedulebtn_todo.clicked.connect(self.schedule_open)
+        self.schedulebtn_diary.clicked.connect(self.schedule_open)
 
-    def main_open(self):
-        self.schedule.hide()
-        self.diary.hide()
+
+    def general_open(self):
+        self.general.show()  # показываем только глав панель
         self.todo.hide()
-        self.general.show()
+        self.diary.hide()
+        self.schedule.hide()
+        self.results.hide()
+        self.settings.hide()
+        self.date.setText(f'{self.todays_date}')
 
     def todo_open(self):
-        self.schedule.hide()
-        self.diary.hide()
-        self.todo.show()
         self.general.hide()
+        self.todo.show()  # показываем только задачник
+        self.diary.hide()
+        self.schedule.hide()
+        self.results.hide()
+        self.settings.hide()
 
     def diary_open(self):
-        self.schedule.hide()
-        self.diary.show()
-        self.todo.hide()
         self.general.hide()
+        self.todo.hide()
+        self.diary.show()  # показываем только ежедневник
+        self.schedule.hide()
+        self.results.hide()
+        self.settings.hide()
 
     def schedule_open(self):
-        self.schedule.show()
-        self.diary.hide()
-        self.todo.hide()
         self.general.hide()
+        self.todo.hide()
+        self.diary.hide()
+        self.schedule.show()  # показываем только планировщик
+        self.results.hide()
+        self.settings.hide()
+
+    def results_open(self):
+        self.general.hide()
+        self.todo.hide()
+        self.diary.hide()
+        self.schedule.hide()
+        self.results.show()  # показываем только результаты
+        self.settings.hide()
+
+    def settings_open(self):
+        self.general.hide()
+        self.todo.hide()
+        self.diary.hide()
+        self.schedule.hide()
+        self.results.hide()
+        self.settings.show()  # показываем только настройки
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
