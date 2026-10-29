@@ -264,7 +264,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <widget class="QLabel" name="label_2">
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>0</x>
        <y>180</y>
        <width>161</width>
        <height>41</height>
@@ -272,14 +272,14 @@ li.checked::marker { content: &quot;\2612&quot;; }
      </property>
      <property name="font">
       <font>
-       <pointsize>20</pointsize>
+       <pointsize>18</pointsize>
       </font>
      </property>
      <property name="text">
       <string>Название:</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="addtbn_todo">
+    <widget class="QPushButton" name="addbtn_todo">
      <property name="geometry">
       <rect>
        <x>50</x>
@@ -297,7 +297,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <string>ДОБАВИТЬ</string>
      </property>
     </widget>
-    <widget class="QCheckBox" name="checkBox">
+    <widget class="QCheckBox" name="cb_todo">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -344,7 +344,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <widget class="QLineEdit" name="name_todo">
      <property name="geometry">
       <rect>
-       <x>150</x>
+       <x>120</x>
        <y>190</y>
        <width>250</width>
        <height>31</height>
@@ -354,19 +354,19 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <widget class="QGroupBox" name="exsisting_tasks">
      <property name="geometry">
       <rect>
-       <x>409</x>
+       <x>379</x>
        <y>149</y>
-       <width>421</width>
+       <width>451</width>
        <height>521</height>
       </rect>
      </property>
      <property name="title">
       <string/>
      </property>
-     <widget class="QListWidget" name="exist_tasks">
+     <widget class="QListWidget" name="exist_tasks_todo">
       <property name="geometry">
        <rect>
-        <x>197</x>
+        <x>229</x>
         <y>1</y>
         <width>187</width>
         <height>425</height>
@@ -376,7 +376,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <widget class="QPushButton" name="todobtn_todo">
       <property name="geometry">
        <rect>
-        <x>198</x>
+        <x>230</x>
         <y>400</y>
         <width>65</width>
         <height>81</height>
@@ -389,7 +389,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <widget class="QPushButton" name="diarybtn_todo">
       <property name="geometry">
        <rect>
-        <x>260</x>
+        <x>292</x>
         <y>420</y>
         <width>63</width>
         <height>61</height>
@@ -407,7 +407,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <widget class="QPushButton" name="schedulebtn_todo">
       <property name="geometry">
        <rect>
-        <x>320</x>
+        <x>352</x>
         <y>420</y>
         <width>63</width>
         <height>61</height>
@@ -422,27 +422,35 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <string>Планировщик</string>
       </property>
      </widget>
-     <widget class="QListWidget" name="tasks_criterions">
+     <widget class="QListWidget" name="tasks_criterions_todo">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>2</x>
         <y>1</y>
-        <width>201</width>
+        <width>231</width>
         <height>485</height>
        </rect>
       </property>
      </widget>
-     <zorder>exist_tasks</zorder>
-     <zorder>tasks_criterions</zorder>
-     <zorder>todobtn_todo</zorder>
-     <zorder>diarybtn_todo</zorder>
-     <zorder>schedulebtn_todo</zorder>
+     <widget class="QPushButton" name="delbtn_todo">
+      <property name="geometry">
+       <rect>
+        <x>285</x>
+        <y>365</y>
+        <width>75</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Удалить</string>
+      </property>
+     </widget>
     </widget>
     <zorder>listView_4</zorder>
     <zorder>label</zorder>
     <zorder>label_2</zorder>
-    <zorder>addtbn_todo</zorder>
-    <zorder>checkBox</zorder>
+    <zorder>addbtn_todo</zorder>
+    <zorder>cb_todo</zorder>
     <zorder>gridLayoutWidget</zorder>
     <zorder>name_todo</zorder>
     <zorder>exsisting_tasks</zorder>
@@ -477,7 +485,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <string>ЕЖЕДНЕВНИК</string>
      </property>
     </widget>
-    <widget class="QCheckBox" name="checkBox_2">
+    <widget class="QCheckBox" name="cb_diary">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -560,7 +568,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <string>Планировщик</string>
      </property>
     </widget>
-    <widget class="QListWidget" name="exist_tasks_2">
+    <widget class="QListWidget" name="exist_tasks_diary">
      <property name="geometry">
       <rect>
        <x>605</x>
@@ -626,17 +634,31 @@ li.checked::marker { content: &quot;\2612&quot;; }
       </rect>
      </property>
     </widget>
+    <widget class="QPushButton" name="delbtn_diary">
+     <property name="geometry">
+      <rect>
+       <x>660</x>
+       <y>525</y>
+       <width>75</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Удалить</string>
+     </property>
+    </widget>
     <zorder>listView_5</zorder>
     <zorder>label_3</zorder>
-    <zorder>checkBox_2</zorder>
+    <zorder>cb_diary</zorder>
     <zorder>addbtn_diary</zorder>
     <zorder>gridLayoutWidget_2</zorder>
     <zorder>label_4</zorder>
-    <zorder>exist_tasks_2</zorder>
+    <zorder>exist_tasks_diary</zorder>
     <zorder>todobtn_diary</zorder>
     <zorder>diarybtn_diary</zorder>
     <zorder>schedulebtn_diary</zorder>
     <zorder>name_diary</zorder>
+    <zorder>delbtn_diary</zorder>
    </widget>
    <widget class="QGroupBox" name="schedule">
     <property name="geometry">
@@ -698,7 +720,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <rect>
        <x>0</x>
        <y>150</y>
-       <width>411</width>
+       <width>381</width>
        <height>421</height>
       </rect>
      </property>
@@ -706,19 +728,19 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <widget class="QGroupBox" name="exsisting_tasks_2">
      <property name="geometry">
       <rect>
-       <x>410</x>
+       <x>382</x>
        <y>149</y>
-       <width>421</width>
+       <width>411</width>
        <height>481</height>
       </rect>
      </property>
      <property name="title">
       <string/>
      </property>
-     <widget class="QListWidget" name="exist_tasks_3">
+     <widget class="QListWidget" name="exist_tasks_schedule">
       <property name="geometry">
        <rect>
-        <x>197</x>
+        <x>225</x>
         <y>1</y>
         <width>185</width>
         <height>425</height>
@@ -728,7 +750,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <widget class="QPushButton" name="todobtn_schedule">
       <property name="geometry">
        <rect>
-        <x>198</x>
+        <x>226</x>
         <y>420</y>
         <width>65</width>
         <height>61</height>
@@ -741,7 +763,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <widget class="QPushButton" name="diarybtn_schedule">
       <property name="geometry">
        <rect>
-        <x>260</x>
+        <x>288</x>
         <y>420</y>
         <width>63</width>
         <height>61</height>
@@ -759,7 +781,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <widget class="QPushButton" name="schedulebtn_schedule">
       <property name="geometry">
        <rect>
-        <x>320</x>
+        <x>348</x>
         <y>393</y>
         <width>63</width>
         <height>81</height>
@@ -774,12 +796,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <string>Планировщик</string>
       </property>
      </widget>
-     <widget class="QListWidget" name="tasks_criterions_2">
+     <widget class="QListWidget" name="tasks_criterions_schedule">
       <property name="geometry">
        <rect>
         <x>0</x>
         <y>1</y>
-        <width>201</width>
+        <width>231</width>
         <height>423</height>
        </rect>
       </property>
@@ -802,7 +824,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <string>ДОБАВИТЬ</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="checkBox_3">
+     <widget class="QCheckBox" name="cb_schedule">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -825,19 +847,33 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <rect>
         <x>0</x>
         <y>431</y>
-        <width>201</width>
+        <width>227</width>
         <height>41</height>
        </rect>
       </property>
      </widget>
-     <zorder>exist_tasks_3</zorder>
-     <zorder>tasks_criterions_2</zorder>
+     <widget class="QPushButton" name="delbtn_schedule">
+      <property name="geometry">
+       <rect>
+        <x>280</x>
+        <y>365</y>
+        <width>75</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Удалить</string>
+      </property>
+     </widget>
+     <zorder>tasks_criterions_schedule</zorder>
+     <zorder>exist_tasks_schedule</zorder>
      <zorder>addbtn_schedule</zorder>
-     <zorder>checkBox_3</zorder>
+     <zorder>cb_schedule</zorder>
      <zorder>todobtn_schedule</zorder>
      <zorder>diarybtn_schedule</zorder>
      <zorder>schedulebtn_schedule</zorder>
      <zorder>timeEdit</zorder>
+     <zorder>delbtn_schedule</zorder>
     </widget>
     <zorder>listView_6</zorder>
     <zorder>label_7</zorder>
