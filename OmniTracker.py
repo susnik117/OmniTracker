@@ -14,11 +14,6 @@ class TooManyCritsError(Exception):
     pass
 
 
-class NotEnoughCritsError(Exception):
-    """Вызывается тогда, когда слишком мало критериев"""
-    pass
-
-
 class WrongValue(Exception):
     """Вызывается тогда, когда в числовые значения критериев ввели неправильные критерии"""
     pass
@@ -33,13 +28,16 @@ class IdenticalNames(Exception):
     """Вызывается тогда, когда у создаваемой задачи то же имя, что и у уже существующей"""
     pass
 
+
 class IncompleteInput(Exception):
     """Вызывается тогда, когда заполнены не все критерии"""
     pass
 
+
 class EmptyName(Exception):
     """Вызывается тогда, когда имени у задачи нет"""
     pass
+
 
 class OmniTracker(QMainWindow):
     """Класс, выполняющий функционал предложения"""
@@ -60,8 +58,11 @@ class OmniTracker(QMainWindow):
         self.schedule_plus.hide()
 
         self.todo.move(0, 0)
+        self.todo_2.move(0, 0)
         self.diary.move(0, 0)
+        self.diary_2.move(0, 0)
         self.schedule.move(0, 0)
+        self.schedule_2.move(0, 0)
         self.results.move(0, 0)
         self.settings.move(0, 0)
 
@@ -122,12 +123,12 @@ class OmniTracker(QMainWindow):
         self.settings_act.triggered.connect(self.settings_open)
 
         # --------------Привязка кнопок---------------------
-        self.diarybtn_todo.clicked.connect(self.diary_open)  # для перемещения между инструментами в вкладках "+"
-        self.diarybtn_schedule.clicked.connect(self.diary_open)
-        self.todobtn_diary.clicked.connect(self.todo_open)
-        self.todobtn_schedule.clicked.connect(self.todo_open)
-        self.schedulebtn_todo.clicked.connect(self.schedule_open)
-        self.schedulebtn_diary.clicked.connect(self.schedule_open)
+        self.diarybtn_todo.clicked.connect(self.diary_open_plus)  # для перемещения между инструментами в вкладках "+"
+        self.diarybtn_schedule.clicked.connect(self.diary_open_plus)
+        self.todobtn_diary.clicked.connect(self.todo_open_plus)
+        self.todobtn_schedule.clicked.connect(self.todo_open_plus)
+        self.schedulebtn_todo.clicked.connect(self.schedule_open_plus)
+        self.schedulebtn_diary.clicked.connect(self.schedule_open_plus)
 
         self.plus_btn.clicked.connect(self.plus)  # для кнопки "+" на глав. панеле
         self.todo_plus.clicked.connect(self.todo_open_plus)
@@ -149,10 +150,13 @@ class OmniTracker(QMainWindow):
     # TODO: сделать так, чтобы открывали другие вкладки, а не те, которые для "+" предназначены
     def general_open(self):
         """Открывает главную страницу"""
-        self.general.show()  # показываем только глав панель
+        self.general.show()  # показываем только главную страницу
         self.todo.hide()
+        self.todo_2.hide()
         self.diary.hide()
+        self.diary_2.hide()
         self.schedule.hide()
+        self.schedule_2.hide()
         self.results.hide()
         self.settings.hide()
 
@@ -174,10 +178,15 @@ class OmniTracker(QMainWindow):
 
     def todo_open(self):
         """Открывает вкладку задачника"""
+        # TODO: сейчас у меня так, что задаваемые критерии показываются в параметрах задачи.
+        #  Нужно сделать так, чтобы, показывались в левой панели
         self.general.hide()
-        self.todo.show()  # показываем только задачник
+        self.todo.hide()
+        self.todo_2.show()  # показываем только задачник (основная вкладка)
         self.diary.hide()
+        self.diary_2.hide()
         self.schedule.hide()
+        self.schedule_2.hide()
         self.results.hide()
         self.settings.hide()
 
@@ -185,26 +194,21 @@ class OmniTracker(QMainWindow):
         self.exist_tasks_diary.clear()
         self.exist_tasks_schedule.clear()
 
-        with open('criterions.csv', 'r', encoding='utf8') as f:  # открытие критериев
-            reader = csv.reader(f, delimiter=';')
-            next(reader)
-            rdr = list(reader)
-            self.tasks_criterions_todo.clear()
-            for line, crit in zip(rdr, self.crits):
-                self.tasks_criterions_todo.addItem(line[0])
-                self.tasks_criterions_todo.addItem('↑')
-                crit.show()
-
-        self.cb_todo.setChecked(False)
-        self.cb_schedule.setChecked(False)
-        self.cb_diary.setChecked(False)
+        self.criterion1.hide()
+        self.criterion2.hide()
+        self.criterion3.hide()
+        self.criterion4.hide()
+        self.criterion5.hide()
 
     def diary_open(self):
         """Открывает вкладку ежедневника"""
         self.general.hide()
         self.todo.hide()
-        self.diary.show()  # показываем только ежедневник
+        self.todo_2.hide()
+        self.diary.hide()
+        self.diary_2.show()  # показываем только ежедневник (основная вкладка)
         self.schedule.hide()
+        self.schedule_2.hide()
         self.results.hide()
         self.settings.hide()
 
@@ -214,40 +218,33 @@ class OmniTracker(QMainWindow):
         self.criterion4.hide()
         self.criterion5.hide()
 
-        self.cb_todo.setChecked(False)
-        self.cb_schedule.setChecked(False)
-        self.cb_diary.setChecked(False)
-
     def schedule_open(self):
         """Открывает вкладку планировщика"""
-
         self.general.hide()
         self.todo.hide()
+        self.todo_2.hide()
         self.diary.hide()
-        self.schedule.show()  # показываем только планировщик
+        self.diary_2.hide()
+        self.schedule.hide()
+        self.schedule_2.show()  # показываем только планировщик (основная вкладка)
         self.results.hide()
         self.settings.hide()
 
-        self.cb_todo.setChecked(False)
-        self.cb_schedule.setChecked(False)
-        self.cb_diary.setChecked(False)
-
-        with open('criterions.csv', 'r', encoding='utf8') as f:  # открытие критериев
-            reader = csv.reader(f, delimiter=';')
-            next(reader)
-            rdr = list(reader)
-            self.tasks_criterions_schedule.clear()
-            for line, crit in zip(rdr, self.crits):
-                self.tasks_criterions_schedule.addItem(line[0])
-                self.tasks_criterions_schedule.addItem('↑')
-                crit.show()
+        self.criterion1.hide()
+        self.criterion2.hide()
+        self.criterion3.hide()
+        self.criterion4.hide()
+        self.criterion5.hide()
 
     def results_open(self):
         """Открывает вкладку с результатами"""
         self.general.hide()
         self.todo.hide()
+        self.todo_2.hide()
         self.diary.hide()
+        self.diary_2.hide()
         self.schedule.hide()
+        self.schedule_2.hide()
         self.results.show()  # показываем только результаты
         self.settings.hide()
 
@@ -265,8 +262,11 @@ class OmniTracker(QMainWindow):
         """Открывает вкладку с настройками"""
         self.general.hide()
         self.todo.hide()
+        self.todo_2.hide()
         self.diary.hide()
+        self.diary_2.hide()
         self.schedule.hide()
+        self.schedule_2.hide()
         self.results.hide()
         self.settings.show()  # показываем только настройки
 
@@ -294,6 +294,12 @@ class OmniTracker(QMainWindow):
         """Открывает вкладку "+" у задачника"""
         self.general.hide()
         self.todo.show()
+        self.diary.hide()
+        self.schedule.hide()
+
+        self.cb_todo.setChecked(False)
+        self.cb_schedule.setChecked(False)
+        self.cb_diary.setChecked(False)
 
         with open('criterions.csv', 'r', encoding='utf8') as f:
             reader = csv.reader(f, delimiter=';')
@@ -309,12 +315,30 @@ class OmniTracker(QMainWindow):
     def diary_open_plus(self):
         """Открывает вкладку "+" у ежедневника"""
         self.general.hide()
+        self.todo.hide()
         self.diary.show()
+        self.schedule.hide()
+
+        self.criterion1.hide()
+        self.criterion2.hide()
+        self.criterion3.hide()
+        self.criterion4.hide()
+        self.criterion5.hide()
+
+        self.cb_todo.setChecked(False)
+        self.cb_schedule.setChecked(False)
+        self.cb_diary.setChecked(False)
 
     def schedule_open_plus(self):
         """Открывает вкладку "+" у планировщика"""
         self.general.hide()
+        self.todo.hide()
+        self.diary.hide()
         self.schedule.show()
+
+        self.cb_todo.setChecked(False)
+        self.cb_schedule.setChecked(False)
+        self.cb_diary.setChecked(False)
 
         with open('criterions.csv', 'r', encoding='utf8') as f:  # открытие критериев
             reader = csv.reader(f, delimiter=';')
@@ -437,6 +461,7 @@ class OmniTracker(QMainWindow):
             writer.writerow(header)
             writer.writerows(new_rows)
         self.exist_tasks_todo.takeItem(self.exist_tasks_todo.row(item))
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
