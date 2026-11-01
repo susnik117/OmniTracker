@@ -68,9 +68,9 @@
     <widget class="QTextBrowser" name="phylosophy_label">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>0</x>
        <y>60</y>
-       <width>781</width>
+       <width>791</width>
        <height>91</height>
       </rect>
      </property>
@@ -1323,7 +1323,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <property name="title">
       <string/>
      </property>
-     <widget class="QListWidget" name="exist_tasks_todo_2">
+     <widget class="QListWidget" name="crits_todo">
       <property name="geometry">
        <rect>
         <x>-5</x>
@@ -1365,7 +1365,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <rect>
        <x>0</x>
        <y>150</y>
-       <width>611</width>
+       <width>609</width>
        <height>471</height>
       </rect>
      </property>
