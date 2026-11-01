@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>2529</width>
+    <width>1699</width>
     <height>3500</height>
    </rect>
   </property>
@@ -145,7 +145,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <widget class="QLabel" name="label_5">
      <property name="geometry">
       <rect>
-       <x>330</x>
+       <x>338</x>
        <y>170</y>
        <width>141</width>
        <height>16</height>
@@ -1612,6 +1612,16 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <string>Выполнено</string>
      </property>
     </widget>
+    <widget class="QListWidget" name="tasks_diary">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>150</y>
+       <width>611</width>
+       <height>471</height>
+      </rect>
+     </property>
+    </widget>
     <zorder>label_18</zorder>
     <zorder>cb_diary_2</zorder>
     <zorder>addbtn_diary_2</zorder>
@@ -1625,12 +1635,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <zorder>changebtn_diary</zorder>
     <zorder>exist_tasks_diary_3</zorder>
     <zorder>delbtn_diary_2</zorder>
+    <zorder>tasks_diary</zorder>
     <zorder>complete_diary</zorder>
    </widget>
    <widget class="QGroupBox" name="schedule_2">
     <property name="geometry">
      <rect>
-      <x>830</x>
+      <x>840</x>
       <y>2040</y>
       <width>791</width>
       <height>621</height>
@@ -1704,7 +1715,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </rect>
       </property>
      </widget>
-     <widget class="QListWidget" name="tasks_criterions_schedule_2">
+     <widget class="QListWidget" name="tasks_schedule">
       <property name="geometry">
        <rect>
         <x>0</x>
@@ -1743,7 +1754,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <widget class="QPushButton" name="complete_schedule">
       <property name="geometry">
        <rect>
-        <x>110</x>
+        <x>100</x>
         <y>410</y>
         <width>111</width>
         <height>41</height>
@@ -1766,7 +1777,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>2529</width>
+     <width>1699</width>
      <height>22</height>
     </rect>
    </property>
