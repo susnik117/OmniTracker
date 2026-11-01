@@ -51,7 +51,7 @@ class OmniTracker(QMainWindow):
         self.setFixedHeight(642)
         self.setFixedWidth(791)
         self.setWindowTitle('OmniTracker')
-        self.todays_date = dt.date.today()
+        self.date.setText(f'{dt.date.today()}')
 
         self.todo_plus.hide()
         self.diary_plus.hide()
@@ -59,7 +59,7 @@ class OmniTracker(QMainWindow):
 
         self.windows = [self.general, self.todo, self.todo_2, self.diary, self.diary_2, self.schedule, self.schedule_2,
                         self.results, self.settings]
-                         # все окна в один лист, чтобы можно было легко их открывать/перемещать
+        # все окна в один лист, чтобы можно было легко их открывать/перемещать
 
         for wind in self.windows:
             wind.move(0, 0)
@@ -79,7 +79,6 @@ class OmniTracker(QMainWindow):
             crit.move(400, y_move)
             crit.hide()
             y_move += 36
-
 
         self.criterions = {  # численные значения критериев
             'criterion1': 0,
@@ -102,25 +101,25 @@ class OmniTracker(QMainWindow):
 
         # --------------Привязка действий------------------------
 
-        self.general_menu.triggered.connect(self.general_open)
-        self.todo_act.triggered.connect(self.todo_open)
-        self.diary_act.triggered.connect(self.diary_open)
-        self.schedule_act.triggered.connect(self.schedule_open)
-        self.results_act.triggered.connect(self.results_open)
-        self.settings_act.triggered.connect(self.settings_open)
+        self.general_menu.triggered.connect(lambda: self.open('g'))
+        self.todo_act.triggered.connect(lambda: self.open('t2'))
+        self.diary_act.triggered.connect(lambda: self.open('d2'))
+        self.schedule_act.triggered.connect(lambda: self.open('sch2'))
+        self.results_act.triggered.connect(lambda: self.open('r'))
+        self.settings_act.triggered.connect(lambda: self.open('se'))
 
         # --------------Привязка кнопок---------------------
-        self.diarybtn_todo.clicked.connect(self.diary_open_plus)  # для перемещения между инструментами в вкладках "+"
-        self.diarybtn_schedule.clicked.connect(self.diary_open_plus)
-        self.todobtn_diary.clicked.connect(self.todo_open_plus)
-        self.todobtn_schedule.clicked.connect(self.todo_open_plus)
-        self.schedulebtn_todo.clicked.connect(self.schedule_open_plus)
-        self.schedulebtn_diary.clicked.connect(self.schedule_open_plus)
+        self.diarybtn_todo.clicked.connect(lambda: self.open('d'))  # для перемещения между инструментами в вкладках "+"
+        self.diarybtn_schedule.clicked.connect(lambda: self.open('d'))
+        self.todobtn_diary.clicked.connect(lambda: self.open('t'))
+        self.todobtn_schedule.clicked.connect(lambda: self.open('t'))
+        self.schedulebtn_todo.clicked.connect(lambda: self.open('sch'))
+        self.schedulebtn_diary.clicked.connect(lambda: self.open('sch'))
 
-        self.plus_btn.clicked.connect(self.plus)  # для кнопки "+" на глав. панеле
-        self.todo_plus.clicked.connect(self.todo_open_plus)
-        self.diary_plus.clicked.connect(self.diary_open_plus)
-        self.schedule_plus.clicked.connect(self.schedule_open_plus)
+        self.plus_btn.clicked.connect(lambda: self.open('p'))  # для кнопки "+" на глав. панеле
+        self.todo_plus.clicked.connect(lambda: self.open('t'))
+        self.diary_plus.clicked.connect(lambda: self.open('d'))
+        self.schedule_plus.clicked.connect(lambda: self.open('sch'))
 
         self.addbtn_todo.clicked.connect(self.todo_add)  # для добавления задач в инструменты
 
@@ -130,80 +129,11 @@ class OmniTracker(QMainWindow):
 
         self.delbtn_todo.clicked.connect(self.delete_tasks)
 
-        self.general_open()
-
-    # =========================== ФУНКЦИИ ==========================================
-    # ---------------------------Функции открывашки--------------------------------
-    def general_open(self):
-        """Открывает главную страницу"""
         self.open('g')
 
-        self.date.setText(f'{self.todays_date}')
-
-    def todo_open(self):
-        """Открывает вкладку задачника"""
-        # TODO: сейчас у меня так, что задаваемые критерии показываются в параметрах задачи.
-        #  Нужно сделать так, чтобы, показывались в левой панели
-        self.open('t2')
-
-    def diary_open(self):
-        """Открывает вкладку ежедневника"""
-        self.open('d2')
-
-    def schedule_open(self):
-        """Открывает вкладку планировщика"""
-        self.open('sch2')
-
-    def results_open(self):
-        """Открывает вкладку с результатами"""
-        self.open('r')
-
-    def settings_open(self):
-        """Открывает вкладку с настройками"""
-        self.open('se')
-
-
-
-    def plus(self):
-        """Кнопка "+" """
-        self.todo_plus.show()
-        self.diary_plus.show()
-        self.schedule_plus.show()
-
-    def todo_open_plus(self):
-        """Открывает вкладку "+" у задачника"""
-        self.open('t')
-
-        with open('criterions.csv', 'r', encoding='utf8') as f:
-            reader = csv.reader(f, delimiter=';')
-            next(reader)
-            rdr = list(reader)
-
-            self.tasks_criterions_todo.clear()
-            for i, crit in zip(rdr, self.crits):
-                self.tasks_criterions_todo.addItem(i[0])
-                self.tasks_criterions_todo.addItem('↑')
-                crit.show()
-
-    def diary_open_plus(self):
-        """Открывает вкладку "+" у ежедневника"""
-        self.open('d')
-
-    def schedule_open_plus(self):
-        """Открывает вкладку "+" у планировщика"""
-        self.open('sch')
-
-        with open('criterions.csv', 'r', encoding='utf8') as f:  # открытие критериев
-            reader = csv.reader(f, delimiter=';')
-            next(reader)
-            rdr = list(reader)
-            self.tasks_criterions_schedule.clear()
-            for line, crit in zip(rdr, self.crits):
-                self.tasks_criterions_schedule.addItem(line[0])
-                self.tasks_criterions_schedule.addItem('↑')
-                crit.show()
-
-    def open(self, window):  # помогает быстро открывать вкладки, без мусора в коде
+    # =========================== ФУНКЦИИ ==========================================
+    
+    def open(self, window):  # открывает вкладки
         for wind in self.windows:
             wind.hide()
 
@@ -227,6 +157,16 @@ class OmniTracker(QMainWindow):
                 self.general.show()
             case 't':
                 self.todo.show()
+                with open('criterions.csv', 'r', encoding='utf8') as f:
+                    reader = csv.reader(f, delimiter=';')
+                    next(reader)
+                    rdr = list(reader)
+
+                    self.tasks_criterions_todo.clear()
+                    for i, crit in zip(rdr, self.crits):
+                        self.tasks_criterions_todo.addItem(i[0])
+                        self.tasks_criterions_todo.addItem('↑')
+                        crit.show()
             case 't2':
                 self.todo_2.show()
             case 'd':
@@ -235,12 +175,26 @@ class OmniTracker(QMainWindow):
                 self.diary_2.show()
             case 'sch':
                 self.schedule.show()
+                with open('criterions.csv', 'r', encoding='utf8') as f:  # открытие критериев
+                    reader = csv.reader(f, delimiter=';')
+                    next(reader)
+                    rdr = list(reader)
+                    self.tasks_criterions_schedule.clear()
+                    for line, crit in zip(rdr, self.crits):
+                        self.tasks_criterions_schedule.addItem(line[0])
+                        self.tasks_criterions_schedule.addItem('↑')
+                        crit.show()
             case 'sch2':
                 self.schedule_2.show()
             case 'r':
                 self.results.show()
             case 'se':
                 self.settings.show()
+            case 'p':
+                self.general.show()
+                self.todo_plus.show()
+                self.diary_plus.show()
+                self.schedule_plus.show()
 
     # -----------------------------Функции для добавления задач----------------------
 
