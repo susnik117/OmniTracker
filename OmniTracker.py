@@ -5,7 +5,7 @@ from PyQt6.QtWidgets import QMainWindow, QListWidgetItem, QApplication, QMenuBar
 from PyQt6.QtGui import QColor, QBrush
 from PyQt6 import uic
 import csv
-
+from random import choice
 
 # TODO: сделать так, чтобы панели, на которых выбираются уже существующие задачи выдвигались только тогда, когда
 # TODO: соответствующие checkbox'ы нажаты
@@ -758,6 +758,7 @@ class OmniTracker(QMainWindow):
             self.show_tasks('d2')
 
 if __name__ == '__main__':
+
     with open('todo.csv', 'r', encoding='utf8') as f_read:  # освобождаем файл от лишних пробелов и строк
         reader = f_read.readlines()
         rdr = list(reader)
@@ -776,5 +777,14 @@ if __name__ == '__main__':
 
     app = QApplication(sys.argv)
     om = OmniTracker()
+    with open('phylosophy.txt', 'r', encoding='utf8') as f:
+        reader = f.readlines()
+        rdr = list(reader)
+        nr = [string.strip('\n') for string in rdr if string.strip('\n n')]
+
+        chitata = choice(nr)  # цитата
+
+        om.phylosophy_browser.setHtml(f'<div style="text-align: center;"><h1>{chitata}</h1></div>')
+
     om.show()
     sys.exit(app.exec())

@@ -65,7 +65,7 @@
       </item>
      </layout>
     </widget>
-    <widget class="QTextBrowser" name="phylosophy_label">
+    <widget class="QTextBrowser" name="phylosophy_browser">
      <property name="geometry">
       <rect>
        <x>0</x>
@@ -221,7 +221,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     </widget>
     <zorder>listView_2</zorder>
     <zorder>verticalLayoutWidget_2</zorder>
-    <zorder>phylosophy_label</zorder>
+    <zorder>phylosophy_browser</zorder>
     <zorder>plus_btn</zorder>
     <zorder>today_list</zorder>
     <zorder>verticalLayoutWidget</zorder>
