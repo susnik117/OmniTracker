@@ -346,13 +346,13 @@ class OmniTracker(QMainWindow):
                     return
 
             if self.tasks_diary.currentItem():
-                rdr = [row for row in rdr if row[0] != self.name_todo.text().strip()
+                rdr = [row for row in rdr if row[0] != self.name_diary.text().strip()
                        and row[0] != self.tasks_diary.currentItem().text()]
             elif self.exist_tasks_diary.currentItem():
-                rdr = [row for row in rdr if row[0] != self.name_todo.text().strip()
+                rdr = [row for row in rdr if row[0] != self.name_diary.text().strip()
                        and row[0] != self.exist_tasks_diary.currentItem().text()]
             else:
-                rdr = [row for row in rdr if row[0] != self.name_todo.text().strip()]
+                rdr = [row for row in rdr if row[0] != self.name_diary.text().strip()]
 
             new_row = [
                 self.name_diary.text().strip(),
@@ -720,7 +720,7 @@ class OmniTracker(QMainWindow):
 
             self.show_tasks('d2')
 
-        elif 'd22':
+        elif type == 'd22':
             # если надо отменить выполнение задачи из ежедневника
             item = self.tasks_diary.currentItem()
             if item is None:
