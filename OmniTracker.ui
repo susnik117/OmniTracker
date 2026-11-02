@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1699</width>
+    <width>1698</width>
     <height>3500</height>
    </rect>
   </property>
@@ -509,21 +509,10 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <string>ДОБАВИТЬ</string>
      </property>
     </widget>
-    <widget class="QWidget" name="gridLayoutWidget_2">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>230</y>
-       <width>281</width>
-       <height>201</height>
-      </rect>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_3"/>
-    </widget>
     <widget class="QLabel" name="label_4">
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>0</x>
        <y>180</y>
        <width>161</width>
        <height>41</height>
@@ -615,7 +604,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <widget class="QLineEdit" name="name_diary">
      <property name="geometry">
       <rect>
-       <x>150</x>
+       <x>120</x>
        <y>190</y>
        <width>250</width>
        <height>31</height>
@@ -635,11 +624,154 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <string>Удалить</string>
      </property>
     </widget>
+    <widget class="QCheckBox" name="monday">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>255</y>
+       <width>111</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Понедельник</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_21">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>230</y>
+       <width>151</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Повторять каждый:</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="tuesday">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>280</y>
+       <width>101</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Вторник</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="wednesday">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>305</y>
+       <width>101</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Среда</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="thursday">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>330</y>
+       <width>101</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Четверг</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="friday">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>355</y>
+       <width>101</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Пятница</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="saturday">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>380</y>
+       <width>101</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Суббота</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="sunday">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>405</y>
+       <width>101</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Воскресенье</string>
+     </property>
+    </widget>
     <zorder>listView_5</zorder>
     <zorder>label_3</zorder>
     <zorder>cb_diary</zorder>
     <zorder>addbtn_diary</zorder>
-    <zorder>gridLayoutWidget_2</zorder>
     <zorder>label_4</zorder>
     <zorder>exist_tasks_diary</zorder>
     <zorder>todobtn_diary</zorder>
@@ -647,6 +779,14 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <zorder>name_diary</zorder>
     <zorder>delbtn_diary</zorder>
     <zorder>diarybtn_diary</zorder>
+    <zorder>monday</zorder>
+    <zorder>label_21</zorder>
+    <zorder>tuesday</zorder>
+    <zorder>wednesday</zorder>
+    <zorder>thursday</zorder>
+    <zorder>friday</zorder>
+    <zorder>saturday</zorder>
+    <zorder>sunday</zorder>
    </widget>
    <widget class="QGroupBox" name="schedule">
     <property name="geometry">
@@ -1455,17 +1595,6 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <string>ДОБАВИТЬ</string>
      </property>
     </widget>
-    <widget class="QWidget" name="gridLayoutWidget_6">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>230</y>
-       <width>281</width>
-       <height>201</height>
-      </rect>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_6"/>
-    </widget>
     <widget class="QLabel" name="label_19">
      <property name="geometry">
       <rect>
@@ -1584,13 +1713,41 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <string>Изменить</string>
      </property>
     </widget>
-    <widget class="QListWidget" name="exist_tasks_diary_3">
+    <widget class="QListWidget" name="days_diary">
      <property name="geometry">
       <rect>
        <x>610</x>
        <y>149</y>
        <width>184</width>
        <height>425</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="cancel_diary">
+     <property name="geometry">
+      <rect>
+       <x>457</x>
+       <y>500</y>
+       <width>151</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Отменить выполнение</string>
+     </property>
+    </widget>
+    <widget class="QListWidget" name="tasks_diary">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>150</y>
+       <width>611</width>
+       <height>471</height>
       </rect>
      </property>
     </widget>
@@ -1612,20 +1769,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <string>Выполнено</string>
      </property>
     </widget>
-    <widget class="QListWidget" name="tasks_diary">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>150</y>
-       <width>611</width>
-       <height>471</height>
-      </rect>
-     </property>
-    </widget>
     <zorder>label_18</zorder>
     <zorder>cb_diary_2</zorder>
     <zorder>addbtn_diary_2</zorder>
-    <zorder>gridLayoutWidget_6</zorder>
     <zorder>label_19</zorder>
     <zorder>schedulebtn_diary_2</zorder>
     <zorder>exist_tasks_diary_2</zorder>
@@ -1633,9 +1779,10 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <zorder>diarybtn_diary_2</zorder>
     <zorder>listView_10</zorder>
     <zorder>changebtn_diary</zorder>
-    <zorder>exist_tasks_diary_3</zorder>
+    <zorder>days_diary</zorder>
     <zorder>delbtn_diary_2</zorder>
     <zorder>tasks_diary</zorder>
+    <zorder>cancel_diary</zorder>
     <zorder>complete_diary</zorder>
    </widget>
    <widget class="QGroupBox" name="schedule_2">
@@ -1777,7 +1924,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1699</width>
+     <width>1698</width>
      <height>22</height>
     </rect>
    </property>
