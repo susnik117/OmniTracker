@@ -1769,6 +1769,19 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <string>Выполнено</string>
      </property>
     </widget>
+    <widget class="QCheckBox" name="show_all_tasks">
+     <property name="geometry">
+      <rect>
+       <x>460</x>
+       <y>460</y>
+       <width>141</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Показать все задачи</string>
+     </property>
+    </widget>
     <zorder>label_18</zorder>
     <zorder>cb_diary_2</zorder>
     <zorder>addbtn_diary_2</zorder>
@@ -1784,6 +1797,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <zorder>tasks_diary</zorder>
     <zorder>cancel_diary</zorder>
     <zorder>complete_diary</zorder>
+    <zorder>show_all_tasks</zorder>
    </widget>
    <widget class="QGroupBox" name="schedule_2">
     <property name="geometry">
