@@ -7,6 +7,7 @@ from PyQt6 import uic
 import csv
 from random import choice
 
+
 # TODO: сделать так, чтобы панели, на которых выбираются уже существующие задачи выдвигались только тогда, когда
 # TODO: соответствующие checkbox'ы нажаты
 
@@ -143,6 +144,7 @@ class OmniTracker(QMainWindow):
 
         self.cb_todo.stateChanged.connect(lambda: self.show_tasks('t'))
         self.cb_diary.stateChanged.connect(lambda: self.show_tasks('d'))
+        self.show_all_tasks.stateChanged.connect(lambda: self.show_tasks('d22'))
         self.cb_schedule.stateChanged.connect(lambda: self.show_tasks('sch'))
 
         self.delbtn_todo.clicked.connect(lambda: self.delete_tasks('t'))
@@ -342,7 +344,7 @@ class OmniTracker(QMainWindow):
 
             new_row = [
                 self.name_diary.text().strip(),
-                "",
+                ";",
                 '1' if self.monday.isChecked() else '0',
                 '2' if self.tuesday.isChecked() else '0',
                 '3' if self.wednesday.isChecked() else '0',
@@ -358,7 +360,7 @@ class OmniTracker(QMainWindow):
             self.name_diary.clear()
             for i in self.days:
                 i.setChecked(False)
-            self.old_task_diary = []
+            self.show_tasks('d')
 
         except EmptyName:
             QMessageBox.warning(self, 'Добавление', 'Имя не введено!')
@@ -416,6 +418,36 @@ class OmniTracker(QMainWindow):
                         self.tasks_diary.addItem(item)
                     elif str(dt.date.today().isoweekday()) in task[2:]:
                         self.tasks_diary.addItem(task[0])
+
+            elif type == 'd22':
+                self.tasks_diary.clear()
+                if self.show_all_tasks.isChecked():
+                    for task in rdr_diary:
+                        if task[1] == self.todays or str(dt.date.today().isoweekday()) not in task[2:]:
+                            item = QListWidgetItem(task[0])
+                            item.setForeground(QBrush(QColor("gray")))
+
+                            font = item.font()
+                            font.setPointSize(7)  # размер шрифта
+                            item.setFont(font)
+
+                            self.tasks_diary.addItem(item)
+                        else:
+                            self.tasks_diary.addItem(task[0])
+                else:
+                    self.tasks_diary.clear()
+                    for task in rdr_diary:
+                        if task[1] == self.todays and str(dt.date.today().isoweekday()) in task[2:]:
+                            item = QListWidgetItem(task[0])
+                            item.setForeground(QBrush(QColor("gray")))
+
+                            font = item.font()
+                            font.setPointSize(7)  # размер шрифта
+                            item.setFont(font)
+
+                            self.tasks_diary.addItem(item)
+                        elif str(dt.date.today().isoweekday()) in task[2:]:
+                            self.tasks_diary.addItem(task[0])
 
         elif 'sch' in type:
             with open('schedule.csv', 'r', encoding='utf8') as f:
@@ -667,6 +699,7 @@ class OmniTracker(QMainWindow):
         elif file == 'schedule.csv':
             self.schedule_file.clear()
             self.schedule_file = [header] + write
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
