@@ -100,6 +100,10 @@ class OmniTracker(QMainWindow):
             'criterion4': 0,
             'criterion5': 0
         }
+        # здесь будут записываться данные с файлов, чтобы читать их и не нужно было при каждой операции открывать файлы
+        self.todo_file = []
+        self.diary_file = []
+        self.schedule_file = []
 
         # -------------Создание меню и действий---------------
         self.menu_bar = QMenuBar(self)
@@ -187,33 +191,29 @@ class OmniTracker(QMainWindow):
         self.diary_plus.hide()
         self.schedule_plus.hide()
 
+        self.crits_todo.clear()
+        self.days_diary.clear()
+
         match window:
             case 'g':
                 self.general.show()
                 self.today_list.clear()
                 self.today_list.addItem('\n\n')
-                with open('diary.csv', 'r', encoding='utf8') as f:
-                    reader = csv.reader(f, delimiter=';')
-                    next(reader)
-                    rdr = list(reader)
-
-                    for task in rdr:
-                        days_active = task[2:]
-                        if str(dt.date.today().isoweekday()) in days_active and task[1] != self.todays:
-                            self.today_list.addItem(task[0])
+                rdr = self.diary_file[1:]
+                for task in rdr:
+                    days_active = task[2:]
+                    if str(dt.date.today().isoweekday()) in days_active and task[1] != self.todays:
+                        self.today_list.addItem(task[0])
 
             case 't':
                 self.todo.show()
-                with open('criterions.csv', 'r', encoding='utf8') as f:
-                    reader = csv.reader(f, delimiter=';')
-                    next(reader)
-                    rdr = list(reader)
+                _, rdr = self.read_file('criterions.csv')
 
-                    self.tasks_criterions_todo.clear()
-                    for i, crit in zip(rdr, self.crits):
-                        self.tasks_criterions_todo.addItem(i[0])
-                        crit.show()
-                        self.tasks_criterions_todo.addItem('\n')
+                self.tasks_criterions_todo.clear()
+                for i, crit in zip(rdr, self.crits):
+                    self.tasks_criterions_todo.addItem(i[0])
+                    crit.show()
+                    self.tasks_criterions_todo.addItem('\n')
             case 't2':
                 self.todo_2.show()
                 self.show_tasks('t2')
@@ -225,15 +225,12 @@ class OmniTracker(QMainWindow):
                 self.show_tasks('d2')
             case 'sch':
                 self.schedule.show()
-                with open('criterions.csv', 'r', encoding='utf8') as f:  # открытие критериев
-                    reader = csv.reader(f, delimiter=';')
-                    next(reader)
-                    rdr = list(reader)
-                    self.tasks_criterions_schedule.clear()
-                    for line, crit in zip(rdr, self.crits):
-                        self.tasks_criterions_schedule.addItem(line[0])
-                        crit.show()
-                        self.tasks_criterions_schedule.addItem('\n')
+                _, rdr = self.read_file('criterions.csv')
+                self.tasks_criterions_schedule.clear()
+                for line, crit in zip(rdr, self.crits):
+                    self.tasks_criterions_schedule.addItem(line[0])
+                    crit.show()
+                    self.tasks_criterions_schedule.addItem('\n')
             case 'sch2':
                 self.schedule_2.show()
             case 'r':
@@ -267,11 +264,7 @@ class OmniTracker(QMainWindow):
             if any(not c.text().strip() for c in ready):
                 raise IncompleteInput
 
-            with open('todo.csv', 'r', encoding='utf8', newline='') as f_todo:  # читаем строки
-                reader_names = csv.reader(f_todo, delimiter=';')
-                header = next(reader_names)
-                rn = list(reader_names)
-
+            header, rn = self.todo_file[0], self.todo_file[1:]
             ident = next((row for row in rn if row and row[0] == self.name_todo.text().strip()), None)
 
             if ident:
@@ -301,11 +294,7 @@ class OmniTracker(QMainWindow):
                 fvnum if True else '0',
             ]
             rn.append(new_row)
-
-            with open('todo.csv', 'w', encoding='utf8', newline='') as f_write:
-                writer = csv.writer(f_write, delimiter=';')
-                writer.writerow(header)
-                writer.writerows(rn)
+            self.write_file('todo.csv', header, rn)
 
             self.name_todo.clear()
             for crit in ready:
@@ -327,10 +316,7 @@ class OmniTracker(QMainWindow):
             if not any(x for x in self.days if x.isChecked()):
                 raise IncompleteInput
 
-            with open('diary.csv', 'r', encoding='utf8') as f:
-                reader = csv.reader(f, delimiter=';')
-                header = next(reader)
-                rdr = list(reader)
+            header, rdr = self.diary_file[0], self.diary_file[1:]
 
             # ищем совпадения
             ident = next((row for row in rdr if row and row[0] == self.name_diary.text().strip()), None)
@@ -367,11 +353,7 @@ class OmniTracker(QMainWindow):
             ]
 
             rdr.append(new_row)
-
-            with open('diary.csv', 'w', encoding='utf8', newline='') as f_write:
-                writer = csv.writer(f_write, delimiter=';')
-                writer.writerow(header)
-                writer.writerows(rdr)
+            self.write_file('diary.csv', header, rdr)
 
             self.name_diary.clear()
             for i in self.days:
@@ -383,61 +365,57 @@ class OmniTracker(QMainWindow):
         except IncompleteInput:
             QMessageBox.warning(self, 'Добавление', "Выберите хоть один день!")
 
+    def schedule_add(self):
+        ...
+
     # ------------------------------Остальные функции----------------------------------------------------
 
     def show_tasks(self, type):
         """Показать уже существующие задачи"""
         if 't' in type:
-            with open('todo.csv', 'r', encoding='utf8') as f_todo:
-                # TODO: надо придумать, как показывать текущие критерии у задачи
-                reader_todo = csv.reader(f_todo, delimiter=';')
-                next(reader_todo)
-                rdr_todo = list(reader_todo)
-
-                if type == 't':
-                    if self.cb_todo.isChecked():
-                        self.exist_tasks_todo.clear()
-                        for task in rdr_todo:
-                            self.exist_tasks_todo.addItem(task[0])
-                    else:
-                        for crit in self.crits:
-                            crit.setText('')
-                        self.name_todo.setText('')
-                        self.exist_tasks_todo.clear()
-
-                elif type == 't2':
-                    self.tasks_todo.clear()
+            rdr_todo = self.todo_file[1:]
+            if type == 't':
+                if self.cb_todo.isChecked():
+                    self.exist_tasks_todo.clear()
                     for task in rdr_todo:
-                        self.tasks_todo.addItem(task[0])
+                        self.exist_tasks_todo.addItem(task[0])
+                else:
+                    for crit in self.crits:
+                        crit.setText('')
+                    self.name_todo.setText('')
+                    self.exist_tasks_todo.clear()
+
+            elif type == 't2':
+                self.tasks_todo.clear()
+                for task in rdr_todo:
+                    self.tasks_todo.addItem(task[0])
 
         elif 'd' in type:
-            with open('diary.csv', 'r', encoding='utf8') as f_diary:
-                reader_diary = csv.reader(f_diary, delimiter=';')
-                next(reader_diary)
-                rdr_diary = list(reader_diary)
-
-                if type == 'd':
-                    if self.cb_diary.isChecked():
-                        self.exist_tasks_diary.clear()
-                        for task in rdr_diary:
-                            self.exist_tasks_diary.addItem(task[0])
-                    else:
-                        self.exist_tasks_diary.clear()
-                elif type == 'd2':
-                    self.tasks_diary.clear()
+            rdr_diary = self.diary_file[1:]
+            if type == 'd':
+                if self.cb_diary.isChecked():
+                    self.exist_tasks_diary.clear()
                     for task in rdr_diary:
+                        self.exist_tasks_diary.addItem(task[0])
+                else:
+                    self.exist_tasks_diary.clear()
+            elif type == 'd2':
+                # TODO: сделать так, чтобы пользователь мог нажать на чекбокс и показать все задачи, даже если они
+                #  На сегодня неактивны
+                self.tasks_diary.clear()
+                for task in rdr_diary:
 
-                        if task[1] == self.todays and str(dt.date.today().isoweekday()) in task[2:]:
-                            item = QListWidgetItem(task[0])
-                            item.setForeground(QBrush(QColor("gray")))
+                    if task[1] == self.todays and str(dt.date.today().isoweekday()) in task[2:]:
+                        item = QListWidgetItem(task[0])
+                        item.setForeground(QBrush(QColor("gray")))
 
-                            font = item.font()
-                            font.setPointSize(7)  # размер шрифта
-                            item.setFont(font)
+                        font = item.font()
+                        font.setPointSize(7)  # размер шрифта
+                        item.setFont(font)
 
-                            self.tasks_diary.addItem(item)
-                        elif str(dt.date.today().isoweekday()) in task[2:]:
-                            self.tasks_diary.addItem(task[0])
+                        self.tasks_diary.addItem(item)
+                    elif str(dt.date.today().isoweekday()) in task[2:]:
+                        self.tasks_diary.addItem(task[0])
 
         elif 'sch' in type:
             with open('schedule.csv', 'r', encoding='utf8') as f:
@@ -446,86 +424,74 @@ class OmniTracker(QMainWindow):
     def show_crits(self, type: str):
         """Показывает критерии (для задачника и планировщика) и дни (для ежедневника)"""
         if 't' in type:
-            with open('criterions.csv', 'r', encoding='utf8') as f_crits, \
-                    open('todo.csv', 'r', encoding='utf8') as f_todo:
-                reader_c = csv.reader(f_crits, delimiter=';')  # ридер для критериев
-                next(reader_c)
-                rdr_c = list(reader_c)
+            _, rdr_c = self.read_file('criterions.csv')
+            rdr_t = self.todo_file[1:]
+            task = []
+            if type == 't':
+                for i in rdr_t:
+                    if i[0] == self.exist_tasks_todo.currentItem().text():
+                        task = i
+                        break
+                self.name_todo.setText(task[0])
+                for crit, num in zip(self.crits, task[1:]):
+                    crit.setText(num)
 
-                reader_t = csv.reader(f_todo, delimiter=';')  # ридер для задач
-                next(reader_t)
-                rdr_t = reader_t
-
-                task = []
-                if type == 't':
-                    for i in rdr_t:
-                        if i[0] == self.exist_tasks_todo.currentItem().text():
-                            task = i
-                            break
-                    self.name_todo.setText(task[0])
-                    for crit, num in zip(self.crits, task[1:]):
-                        crit.setText(num)
-
-                if type == 't2':
-                    for i in rdr_t:
-                        if i[0] == self.tasks_todo.currentItem().text():
-                            task = i
-                            break
-                    self.crits_todo.clear()
-                    for i, num in zip(rdr_c, task[1:]):
-                        self.crits_todo.addItem(f'{i[0]}:\n   {num}')
+            if type == 't2':
+                for i in rdr_t:
+                    if i[0] == self.tasks_todo.currentItem().text():
+                        task = i
+                        break
+                self.crits_todo.clear()
+                for i, num in zip(rdr_c, task[1:]):
+                    self.crits_todo.addItem(f'{i[0]}:\n   {num}')
 
         elif 'd' in type:
-            with open('diary.csv', 'r', encoding='utf8') as f:
-                reader = csv.reader(f, delimiter=';')
-                next(reader)
-                rdr = reader
+            rdr = self.diary_file[1:]
+            if type == 'd':
+                for i in rdr:
+                    if i[0] == self.exist_tasks_diary.currentItem().text():
+                        task = i
+                        break
+                self.name_diary.setText(task[0])
+                for day in self.days:
+                    day.setChecked(False)
+                days = task[2:]
+                if '1' in days:
+                    self.monday.setChecked(True)
+                if '2' in days:
+                    self.tuesday.setChecked(True)
+                if '3' in days:
+                    self.wednesday.setChecked(True)
+                if '4' in days:
+                    self.thursday.setChecked(True)
+                if '5' in days:
+                    self.friday.setChecked(True)
+                if '6' in days:
+                    self.saturday.setChecked(True)
+                if '7' in days:
+                    self.sunday.setChecked(True)
 
-                if type == 'd':
-                    for i in rdr:
-                        if i[0] == self.exist_tasks_diary.currentItem().text():
-                            task = i
-                            break
-                    self.name_diary.setText(task[0])
-                    for day in self.days:
-                        day.setChecked(False)
-                    days = task[2:]
-                    if '1' in days:
-                        self.monday.setChecked(True)
-                    if '2' in days:
-                        self.tuesday.setChecked(True)
-                    if '3' in days:
-                        self.wednesday.setChecked(True)
-                    if '4' in days:
-                        self.thursday.setChecked(True)
-                    if '5' in days:
-                        self.friday.setChecked(True)
-                    if '6' in days:
-                        self.saturday.setChecked(True)
-                    if '7' in days:
-                        self.sunday.setChecked(True)
-
-                elif type == 'd2':
-                    for i in rdr:
-                        if i[0] == self.tasks_diary.currentItem().text():
-                            task = i
-                            break
-                    days = task[2:]
-                    self.days_diary.clear()
-                    if '1' in days:
-                        self.days_diary.addItem(f'Понедельник')
-                    if '2' in days:
-                        self.days_diary.addItem(f'Вторник')
-                    if '3' in days:
-                        self.days_diary.addItem(f'Среда')
-                    if '4' in days:
-                        self.days_diary.addItem(f'Четверг')
-                    if '5' in days:
-                        self.days_diary.addItem(f'Пятница')
-                    if '6' in days:
-                        self.days_diary.addItem(f'Суббота')
-                    if '7' in days:
-                        self.days_diary.addItem(f'Воскресенье')
+            elif type == 'd2':
+                for i in rdr:
+                    if i[0] == self.tasks_diary.currentItem().text():
+                        task = i
+                        break
+                days = task[2:]
+                self.days_diary.clear()
+                if '1' in days:
+                    self.days_diary.addItem(f'Понедельник')
+                if '2' in days:
+                    self.days_diary.addItem(f'Вторник')
+                if '3' in days:
+                    self.days_diary.addItem(f'Среда')
+                if '4' in days:
+                    self.days_diary.addItem(f'Четверг')
+                if '5' in days:
+                    self.days_diary.addItem(f'Пятница')
+                if '6' in days:
+                    self.days_diary.addItem(f'Суббота')
+                if '7' in days:
+                    self.days_diary.addItem(f'Воскресенье')
 
     def delete_tasks(self, type):
         """Удалить уже существующие задачи"""
@@ -535,19 +501,14 @@ class OmniTracker(QMainWindow):
                 QMessageBox.warning(self, 'Удаление', 'Задача не выбрана!')
                 return
 
-            with open('todo.csv', 'r', encoding='utf8') as f:
-                reader_todo = csv.reader(f, delimiter=';')
-                header_todo = next(reader_todo)
-                rows_todo = list(reader_todo)
-            new_rows = [row for row in rows_todo if row[0] != item_todo.text()]
+            header_todo, reader_todo = self.todo_file[0], self.todo_file[1:]
+            new_rows = [row for row in reader_todo if row[0] != item_todo.text()]
 
-            with open('todo.csv', 'w', encoding='utf8', newline='') as f:
-                writer = csv.writer(f, delimiter=';')
-                writer.writerow(header_todo)
-                writer.writerows(new_rows)
+            self.write_file('todo.csv', header_todo, new_rows)
 
             if type == 't':
                 self.exist_tasks_todo.takeItem(self.exist_tasks_todo.row(item_todo))
+                self.crits_todo.clear()
                 self.show_tasks('t')
             elif type == 't2':
                 self.tasks_todo.takeItem(self.tasks_todo.row(item_todo))
@@ -559,57 +520,46 @@ class OmniTracker(QMainWindow):
                 QMessageBox.warning(self, 'Удаление', 'Задача не выбрана!')
                 return
 
-            with open('diary.csv', 'r', encoding='utf8') as f:
-                reader_diary = csv.reader(f, delimiter=';')
-                header_diary = next(reader_diary)
-                rows_diary = list(reader_diary)
-            new_rows = [row for row in rows_diary if row[0] != item_diary.text()]
+            header_diary, rdr_diary = self.diary_file[0], self.diary_file[1:]
+            new_rows = [row for row in rdr_diary if row[0] != item_diary.text()]
 
-            with open('diary.csv', 'w', encoding='utf8', newline='') as f:
-                writer = csv.writer(f, delimiter=';')
-                writer.writerow(header_diary)
-                writer.writerows(new_rows)
+            self.write_file('diary.csv', header_diary, new_rows)
             if type == 'd':
                 self.exist_tasks_diary.takeItem(self.exist_tasks_diary.row(item_diary))
+
                 self.show_tasks('d')
             elif type == 'd2':
                 self.tasks_diary.takeItem(self.tasks_diary.row(item_diary))
+                self.days_diary.clear()
                 self.show_tasks('d2')
 
     def redo(self, type, task):  # изменяет задачу, направляя её во вкладку "+"
         if task is None:
             QMessageBox.warning(self, 'Изменение', 'Задача не выбрана!')
             return
+
         if 't' in type:
             self.open('t')
             self.name_todo.setText(task)
 
-            with open('todo.csv', 'r', encoding='utf8') as f:
-                reader = csv.reader(f, delimiter=';')
-                next(reader)
-                rdr = list(reader)
-
-                for i in rdr:
-                    if i[0] == task:
-                        for crit, num in zip(self.crits, i[1:]):
-                            crit.setText(str(num))
-                        break
+            rdr = self.diary_file[1:]
+            for i in rdr:
+                if i[0] == task:
+                    for crit, num in zip(self.crits, i[1:]):
+                        crit.setText(str(num))
+                    break
 
         if 'd' in type:
             self.open('d')
             self.name_diary.setText(task)
 
-            with open('diary.csv', 'r', encoding='utf8') as f:
-                reader = csv.reader(f, delimiter=';')
-                next(reader)
-                rdr = list(reader)
+            rdr = self.diary_file[1:]
 
-                for day in self.days:
-                    day.setChecked(False)
+            for day in self.days:
+                day.setChecked(False)
 
                 for i in rdr:
                     if i[0] == task:
-                        self.old_task_diary = i
                         days = i[2:]
                         if '1' in days:
                             self.monday.setChecked(True)
@@ -632,22 +582,8 @@ class OmniTracker(QMainWindow):
             if item is None:
                 QMessageBox.warning(self, 'Выполнение', 'Задача не выбрана!')
                 return
-
-            try:
-                with open('graph1.csv', 'r', encoding='utf8') as f_read_res, \
-                        open('todo.csv', 'r', encoding='utf8') as f_read_todo:
-                    reader_res = csv.reader(f_read_res, delimiter=';')
-                    reader_todo = csv.reader(f_read_todo, delimiter=';')
-                    header_res = next(reader_res, None)
-                    header_todo = next(reader_todo, None)
-                    if header_res is None or header_todo is None:
-                        QMessageBox.warning(self, 'Выполнение', 'Файл пуст!')
-                        return
-                    rdr_res = list(reader_res)  # ридер для результатов
-                    rdr_todo = list(reader_todo)  # ридер для задач
-            except FileNotFoundError:
-                QMessageBox.warning(self, 'Выполнение', f'Файл не найден!')
-                return
+            header_res, rdr_res = self.read_file('graph1.csv')
+            header_todo, rdr_todo = self.todo_file[0], self.todo_file[1:]
 
             task = [x for x in rdr_todo if x and x[0] == item.text()]
             if not task:
@@ -668,18 +604,8 @@ class OmniTracker(QMainWindow):
             if not today:
                 updated_res.append([self.todays, str(summa)])
 
-            with open('graph1.csv', 'w', encoding='utf8', newline='') as f_write_res, \
-                    open('todo.csv', 'w', encoding='utf8', newline='') as f_write_todo:
-                writer_res = csv.writer(f_write_res, delimiter=';')
-                writer_todo = csv.writer(f_write_todo, delimiter=';')
-
-                writer_todo.writerow(header_todo)
-                for i in new_rows:
-                    writer_todo.writerow(i)
-
-                writer_res.writerow(header_res)
-                for i in updated_res:
-                    writer_res.writerow(i)
+            self.write_file('graph1.csv', header_res, updated_res)  # пишем файл для первого графика
+            self.write_file('todo.csv', header_todo, new_rows)  # пишем файл для задачника
 
             self.show_tasks('t2')
             self.show_crits('t2')
@@ -689,34 +615,14 @@ class OmniTracker(QMainWindow):
             if item is None:
                 QMessageBox.warning(self, 'Выполнение', 'Задача не выбрана!')
                 return
-
-            try:
-                with open('diary.csv', 'r', encoding='utf8') as f_read:
-                    reader = csv.reader(f_read, delimiter=';')
-                    header = next(reader, None)
-                    if header is None:
-                        QMessageBox.warning(self, 'Выполнение', 'Файл пуст!')
-                        return
-                    rdr = list(reader)
-            except FileNotFoundError:
-                QMessageBox.warning(self, 'Выполнение', f'Файл не найден!')
-                return
+            header, rdr = self.diary_file[0], self.diary_file[1:]
 
             updated_row = [x for x in rdr if x and x[0] == item.text()]
-            if not updated_row:
-                QMessageBox.warning(self, 'Выполнение', 'Задача не найдена в файле!')
-                return
-
             last_rows = [x for x in rdr if x and x[0] != item.text()]  # предыдущие строки, чтобы они не утерялись
 
             updated_row[0][1] = self.todays
             last_rows.append(*updated_row)  # перемещаем выполненную задачу в конец
-            with open('diary.csv', 'w', encoding='utf8', newline='') as f_write_todo:
-                writer_todo = csv.writer(f_write_todo, delimiter=';')
-
-                writer_todo.writerow(header)
-                for i in last_rows:
-                    writer_todo.writerow(i)
+            self.write_file('diary.csv', header, last_rows)
 
             self.show_tasks('d2')
 
@@ -727,64 +633,65 @@ class OmniTracker(QMainWindow):
                 QMessageBox.warning(self, 'Выполнение', 'Задача не выбрана!')
                 return
 
-            try:
-                with open('diary.csv', 'r', encoding='utf8') as f_read:
-                    reader = csv.reader(f_read, delimiter=';')
-                    header = next(reader, None)
-                    if header is None:
-                        QMessageBox.warning(self, 'Выполнение', 'Файл пуст!')
-                        return
-                    rdr = list(reader)
-            except FileNotFoundError:
-                QMessageBox.warning(self, 'Выполнение', 'Файл не найден!')
-                return
-
+            header, rdr = self.diary_file[0], self.diary_file[1:]
             updated_task = [x for x in rdr if x and x[0] == item.text()]  # задача, которую нужно обновить
-            if not updated_task:
-                QMessageBox.warning(self, 'Выполнение', 'Задача не найдена в файле!')
-                return
             updated_task[0][1] = ''
             last_rows = [x for x in rdr if x and x[0] != item.text()]  # предыдущие строки, чтобы они не утерялись
 
             last_rows.append(*updated_task)
-
-            with open('diary.csv', 'w', encoding='utf8', newline='') as f_write_todo:
-                writer_todo = csv.writer(f_write_todo, delimiter=';')
-
-                writer_todo.writerow(header)
-                for i in last_rows:
-                    writer_todo.writerow(i)
-
+            self.write_file('diary.csv', header, last_rows)
             self.show_tasks('d2')
 
+    def read_file(self, file):
+        """читает файл, а также избавляется от лишних пробелов, отступов и прочих символов"""
+        with open(file, 'r', encoding='utf8') as f:
+            reader = csv.reader(f, delimiter=';')
+            header = next(reader)
+            nr = [
+                [field.strip() for field in row if field.strip()]
+                for row in reader
+                if any(field.strip() for field in row)  # пропускаем пустые строки
+            ]
+            return header, nr
+
+    def write_file(self, file, header, write):
+        """пишет файл, после чего сразу же перезаписывает соответствующую инструменту переменную для хранения данных"""
+        with open(file, 'w', encoding='utf8') as f:
+            writer = csv.writer(f, delimiter=';')
+            writer.writerow(header)
+            writer.writerows(write)
+        if file == 'todo.csv':
+            self.todo_file = [header] + write
+        elif file == 'diary.csv':
+            self.diary_file = [header] + write
+        elif file == 'schedule.csv':
+            self.schedule_file.clear()
+            self.schedule_file = [header] + write
+
 if __name__ == '__main__':
-
-    with open('todo.csv', 'r', encoding='utf8') as f_read:  # освобождаем файл от лишних пробелов и строк
-        reader = f_read.readlines()
-        rdr = list(reader)
-        nr = [string.strip('\n') for string in rdr if string.strip('\n n')]
-        with open('todo.csv', 'w', encoding='utf8') as f_write:
-            for i in nr:
-                print(i, file=f_write)
-
-    with open('graph1.csv', 'r', encoding='utf8') as f_read:  # освобождаем файл от лишних пробелов и строк
-        reader = f_read.readlines()
-        rdr = list(reader)
-        nr = [string.strip('\n') for string in rdr if string.strip('\n n')]
-        with open('graph1.csv', 'w', encoding='utf8') as f_write:
-            for i in nr:
-                print(i, file=f_write)
-
     app = QApplication(sys.argv)
     om = OmniTracker()
-    with open('phylosophy.txt', 'r', encoding='utf8') as f:
-        reader = f.readlines()
-        rdr = list(reader)
-        nr = [string.strip('\n') for string in rdr if string.strip('\n n')]
 
-        chitata = choice(nr)  # цитата
+    _, nr = om.read_file('phylosophy.txt')
+    chitata = choice(nr)  # добавляем цитату
+    ch = ' '.join(chitata)
+    om.phylosophy_browser.setHtml(f'<div style="text-align: center;"><h1>{ch}</h1></div>')
 
-        om.phylosophy_browser.setHtml(f'<div style="text-align: center;"><h1>{chitata}</h1></div>')
+    head, rdr = om.read_file('todo.csv')
+    om.todo_file = [head] + rdr
+    om.write_file('todo.csv', head, rdr)
+
+    head_diary, rdr_diary = om.read_file('diary.csv')
+    om.diary_file = [head_diary] + rdr_diary
+    om.write_file('diary.csv', head_diary, rdr_diary)
+
+    for task in rdr_diary:  # добавляем задачи из ежедневника на главную панель
+        days_active = task[2:]
+        if str(dt.date.today().isoweekday()) in days_active and task[1] != om.todays:
+            om.today_list.addItem(task[0])
+
+    headd, rdrr = om.read_file('graph1.csv')
+    om.write_file('graph1.csv', headd, rdrr)
 
     om.show()
     sys.exit(app.exec())
