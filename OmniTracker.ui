@@ -604,7 +604,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <widget class="QLineEdit" name="name_diary">
      <property name="geometry">
       <rect>
-       <x>120</x>
+       <x>130</x>
        <y>190</y>
        <width>250</width>
        <height>31</height>
@@ -838,7 +838,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <rect>
        <x>0</x>
        <y>580</y>
-       <width>411</width>
+       <width>381</width>
        <height>41</height>
       </rect>
      </property>
@@ -1003,11 +1003,30 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <zorder>timeEdit</zorder>
      <zorder>delbtn_schedule</zorder>
     </widget>
+    <widget class="QLabel" name="label_22">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>540</y>
+       <width>161</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>20</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Название:</string>
+     </property>
+    </widget>
     <zorder>listView_6</zorder>
     <zorder>label_7</zorder>
     <zorder>name_schedule</zorder>
     <zorder>calendarWidget</zorder>
     <zorder>exsisting_tasks_2</zorder>
+    <zorder>label_22</zorder>
    </widget>
    <widget class="QGroupBox" name="results">
     <property name="geometry">
@@ -1866,7 +1885,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <property name="title">
       <string/>
      </property>
-     <widget class="QListWidget" name="exist_tasks_schedule_2">
+     <widget class="QListWidget" name="crits_schedule">
       <property name="geometry">
        <rect>
         <x>225</x>
