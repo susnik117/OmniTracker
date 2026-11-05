@@ -3,7 +3,7 @@ from io import StringIO
 import datetime as dt
 from PyQt6.QtWidgets import QMainWindow, QListWidgetItem, QApplication, QMenuBar, QLineEdit, QMessageBox
 from PyQt6.QtGui import QColor, QBrush
-from PyQt6.QtCore import QTime
+from PyQt6.QtCore import QTime, QDate
 from PyQt6 import uic
 import csv
 from random import choice
@@ -16,9 +16,6 @@ from random import choice
 
 # TODO: сейчас у меня так, что когда я перехожу между вкладками, то листы, на которых есть критерии, перезаполняются
 #  Надо сделать проверку, что лист уже заполнен и в зависимости от результата заполнять или не заполнять
-
-# TODO: сейчас у меня так, что open() постоянно делает то, что нужно сделать только при старте (например, сортирует файл
-#  Нужно перекинуть это в if __name__ == '__main__'
 
 # TODO: можно сделать так, что некоторые из элементов интерфейса (например, QLineEdit для критериев) создавались бы не
 #  в программе, а в designer'е
@@ -184,8 +181,6 @@ class OmniTracker(QMainWindow):
         self.exist_tasks_schedule.itemClicked.connect(lambda: self.show_crits('sch'))
         self.tasks_schedule.itemClicked.connect(lambda: self.show_crits('sch2'))
 
-        self.open('g')
-
     # =========================== ФУНКЦИИ ==========================================
 
     def open(self, window):  # открывает вкладки
@@ -216,8 +211,18 @@ class OmniTracker(QMainWindow):
                 self.general.show()
                 self.today_list.clear()
                 self.today_list.addItem('\n\n')
-                rdr = self.diary_file[1:]
-                for task in rdr:
+
+                for task in self.schedule_file[1:]:  # задачи из планировщика
+                    if (dt.datetime.strptime(self.todays, '%d-%m-%Y')
+                            == dt.datetime.strptime(task[1], '%d-%m-%Y')):
+                        t = QListWidgetItem(task[0])
+                        font = t.font()
+                        font.setPointSize(12)  # размер в пунктах
+                        font.setBold(True)  # полужирный
+                        t.setFont(font)
+                        self.today_list.addItem(t)
+
+                for task in self.diary_file[1:]: # задачи из ежедневника
                     days_active = task[2:]
                     if str(dt.date.today().isoweekday()) in days_active and task[1] != self.todays:
                         self.today_list.addItem(task[0])
@@ -403,6 +408,14 @@ class OmniTracker(QMainWindow):
                 raise IncompleteInput
             date = self.calendarWidget.selectedDate().toString('dd-MM-yyyy')
             time = self.timeEdit.time().toString('HH:mm')
+            if (dt.datetime.strptime(self.todays, '%d-%m-%Y')  # проверяем, назначается задача ли в прошлое
+                    > dt.datetime.strptime(self.calendarWidget.selectedDate().toString('dd-MM-yyyy'), '%d-%m-%Y')):
+                reply = QMessageBox.question(self, 'Добавление', 'Задача назначается в прошлое. '
+                                                                 'За её выполнение дастся только половина'
+                                                                 ' от изначальной суммы баллов. Назначить всё равно?',
+                                             QMessageBox.StandardButton.Yes, QMessageBox.StandardButton.No)
+                if reply != QMessageBox.StandardButton.Yes:
+                    return
             header, rn = self.schedule_file[0], self.schedule_file[1:]
             ident = next((row for row in rn if row and row[0] == self.name_schedule.text().strip()), None)
 
@@ -756,14 +769,16 @@ class OmniTracker(QMainWindow):
                             self.saturday.setChecked(True)
                         if '7' in days:
                             self.sunday.setChecked(True)
+                            
         elif 'sch' in tool_type:
             self.open('sch')
             n_task = task.split('\n')[0]
             self.name_schedule.setText(n_task)
-            time_task = [x for x in self.schedule_file if x[0].strip() == n_task]  # для того, чтобы найти время
-            print(time_task)
-            rdr = self.schedule_file[1:]
-            t_str = time_task[0][2].strip()
+            dt_task = [x for x in self.schedule_file if x[0].strip() == n_task]  # для того, чтобы найти время и дату
+            rdr = self.schedule_file[1:]  
+            t_str = dt_task[0][2].strip()
+            d_str = dt_task[0][1].strip()
+            self.calendarWidget.setSelectedDate(QDate.fromString(d_str, 'dd-MM-yyyy'))
             self.timeEdit.setTime(QTime.fromString(t_str, 'HH:mm'))
             for i in rdr:
                 if i[0] == n_task:
@@ -849,6 +864,8 @@ class OmniTracker(QMainWindow):
                     <= dt.datetime.strptime(task[0][1], '%d-%m-%Y')):
                 summa = sum(int(n) for n in task[0][3:] if n)
             else:
+                QMessageBox.warning(self, 'Выполнение', 'У задачи истёк дедлайн, поэтому '
+                                                        'за её выполнение вы получили в два раза меньше суммы баллов')
                 summa = sum(int(n) for n in task[0][3:] if n) // 2
 
             new_rows = [row for row in rdr_schedule if row[0] != item_name]
@@ -924,6 +941,6 @@ if __name__ == '__main__':
 
     headd, rdrr = om.read_file('graph1.csv')
     om.write_file('graph1.csv', headd, rdrr)
-
+    om.open('g')
     om.show()
     sys.exit(app.exec())
