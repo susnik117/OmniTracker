@@ -291,14 +291,14 @@ class OmniTracker(QMainWindow):
             ident = next((row for row in rn if row and row[0] == self.name_todo.text().strip()), None)
 
             if ident:
-                rn = [row for row in rn if row[0] != ident[0]]
-
                 reply = QMessageBox.question(
                     self, 'Изменение',
                     "Задача с таким именем уже существует. Вы хотите переписать её?",
                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
                 if reply != QMessageBox.StandardButton.Yes:
                     return
+                else:
+                    rn = [row for row in rn if row[0] != ident[0]]
             if self.tasks_todo.currentItem():
                 rn = [row for row in rn if row[0] != self.name_todo.text().strip()
                       and row[0] != self.tasks_todo.currentItem().text()]
@@ -309,13 +309,8 @@ class OmniTracker(QMainWindow):
                 rn = [row for row in rn if row[0] != self.name_todo.text().strip()]
 
             new_row = [
-                self.name_todo.text().strip(),
-                fnum if True else '0',
-                snum if True else '0',
-                tnum if True else '0',
-                frnum if True else '0',
-                fvnum if True else '0',
-            ]
+                self.name_todo.text().strip(), fnum if True else '0', snum if True else '0', tnum if True else '0',
+                frnum if True else '0', fvnum if True else '0',]
             rn.append(new_row)
             self.write_file('todo.csv', header, rn)
 
@@ -345,14 +340,14 @@ class OmniTracker(QMainWindow):
             ident = next((row for row in rdr if row and row[0] == self.name_diary.text().strip()), None)
 
             if ident:
-                rdr = [row for row in rdr if row[0] != ident[0]]
-
                 reply = QMessageBox.question(
                     self, 'Изменение',
                     "Задача с таким именем уже существует. Вы хотите переписать её?",
                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
                 if reply != QMessageBox.StandardButton.Yes:
                     return
+                else:
+                    rdr = [row for row in rdr if row[0] != ident[0]]
 
             if self.tasks_diary.currentItem():
                 rdr = [row for row in rdr if row[0] != self.name_diary.text().strip()
@@ -420,14 +415,15 @@ class OmniTracker(QMainWindow):
             ident = next((row for row in rn if row and row[0] == self.name_schedule.text().strip()), None)
 
             if ident:
-                rn = [row for row in rn if row[0] != ident[0]]
-
                 reply = QMessageBox.question(
                     self, 'Изменение',
                     "Задача с таким именем уже существует. Вы хотите переписать её?",
                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
                 if reply != QMessageBox.StandardButton.Yes:
                     return
+                else:
+                    rn = [row for row in rn if row[0] != ident[0]]
+
             if self.tasks_schedule.currentItem():
                 rn = [row for row in rn if row[0] != self.name_schedule.text().strip()
                       and row[0] != self.tasks_schedule.currentItem().text()]
@@ -494,8 +490,6 @@ class OmniTracker(QMainWindow):
                 else:
                     self.exist_tasks_diary.clear()
             elif tool_type == 'd2':
-                # TODO: сделать так, чтобы пользователь мог нажать на чекбокс и показать все задачи, даже если они
-                #  На сегодня неактивны
                 self.tasks_diary.clear()
                 for task in rdr_diary:
 
@@ -664,7 +658,8 @@ class OmniTracker(QMainWindow):
             if item_todo is None:
                 QMessageBox.warning(self, 'Удаление', 'Задача не выбрана!')
                 return
-            reply = QMessageBox.question(self, 'Удаление', f'Вы точно хотите удалить задачу {item_todo}?',
+            reply = QMessageBox.question(self, 'Удаление',
+                                         f'Вы точно хотите удалить задачу {item_todo.text()}?',
                                          QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
             if reply != QMessageBox.StandardButton.Yes:
                 return
@@ -798,7 +793,7 @@ class OmniTracker(QMainWindow):
             task = [x for x in rdr_todo if x and x[0] == item.text()]
 
             summa = sum(int(n) for n in task[0][1:] if n)
-
+            QMessageBox.warning(self, 'Выполнение', f"Задача {task[0][0]} выполнена! Начислено: {summa}")
             new_rows = [row for row in rdr_todo if row[0] != item.text()]
 
             updated_res = []  # обновление graph1
@@ -827,7 +822,7 @@ class OmniTracker(QMainWindow):
 
             updated_row = [x for x in rdr if x and x[0] == item.text()]
             last_rows = [x for x in rdr if x and x[0] != item.text()]  # предыдущие строки, чтобы они не утерялись
-
+            QMessageBox.warning(self, 'Выполнение', f"Задача {updated_row[0][0]} выполнена!")
             updated_row[0][1] = self.todays
             last_rows.append(*updated_row)  # перемещаем выполненную задачу в конец
             self.write_file('diary.csv', header, last_rows)
@@ -863,6 +858,7 @@ class OmniTracker(QMainWindow):
             if (dt.datetime.strptime(self.todays, '%d-%m-%Y')
                     <= dt.datetime.strptime(task[0][1], '%d-%m-%Y')):
                 summa = sum(int(n) for n in task[0][3:] if n)
+                QMessageBox.warning(self, 'Выполнение', f"Задача {task[0][0]} выполнена!")
             else:
                 QMessageBox.warning(self, 'Выполнение', 'У задачи истёк дедлайн, поэтому '
                                                         'за её выполнение вы получили в два раза меньше суммы баллов')
@@ -911,7 +907,6 @@ class OmniTracker(QMainWindow):
             self.diary_file = [header] + write
         elif file == 'schedule.csv':
             self.schedule_file = [header] + write
-
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
