@@ -29,8 +29,8 @@
     <widget class="QLabel" name="date">
      <property name="geometry">
       <rect>
-       <x>370</x>
-       <y>190</y>
+       <x>635</x>
+       <y>120</y>
        <width>81</width>
        <height>16</height>
       </rect>
@@ -39,37 +39,11 @@
       <string>(дата)</string>
      </property>
     </widget>
-    <widget class="QWidget" name="verticalLayoutWidget_2">
-     <property name="geometry">
-      <rect>
-       <x>540</x>
-       <y>160</y>
-       <width>241</width>
-       <height>441</height>
-      </rect>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item>
-       <widget class="QLabel" name="graph2">
-        <property name="text">
-         <string>(возможно, здесь будут графики)</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="graph4">
-        <property name="text">
-         <string>(возможно, здесь будут графики)</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
     <widget class="QTextBrowser" name="phylosophy_browser">
      <property name="geometry">
       <rect>
        <x>0</x>
-       <y>60</y>
+       <y>0</y>
        <width>791</width>
        <height>91</height>
       </rect>
@@ -109,44 +83,18 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <widget class="QListWidget" name="today_list">
      <property name="geometry">
       <rect>
-       <x>285</x>
-       <y>160</y>
+       <x>550</x>
+       <y>90</y>
        <width>241</width>
-       <height>381</height>
+       <height>361</height>
       </rect>
      </property>
-    </widget>
-    <widget class="QWidget" name="verticalLayoutWidget">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>160</y>
-       <width>251</width>
-       <height>441</height>
-      </rect>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="QLabel" name="graph1">
-        <property name="text">
-         <string>(возможно, здесь будут графики)</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="graph3">
-        <property name="text">
-         <string>(возможно, здесь будут графики)</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
     </widget>
     <widget class="QLabel" name="label_5">
      <property name="geometry">
       <rect>
-       <x>338</x>
-       <y>170</y>
+       <x>603</x>
+       <y>100</y>
        <width>141</width>
        <height>16</height>
       </rect>
@@ -164,9 +112,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <property name="geometry">
       <rect>
        <x>0</x>
-       <y>150</y>
+       <y>90</y>
        <width>791</width>
-       <height>471</height>
+       <height>531</height>
       </rect>
      </property>
      <property name="styleSheet">
@@ -220,11 +168,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
      </property>
     </widget>
     <zorder>listView_2</zorder>
-    <zorder>verticalLayoutWidget_2</zorder>
     <zorder>phylosophy_browser</zorder>
     <zorder>plus_btn</zorder>
     <zorder>today_list</zorder>
-    <zorder>verticalLayoutWidget</zorder>
     <zorder>label_5</zorder>
     <zorder>date</zorder>
     <zorder>todo_plus</zorder>
@@ -246,9 +192,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <widget class="QLabel" name="label">
      <property name="geometry">
       <rect>
-       <x>198</x>
-       <y>60</y>
-       <width>391</width>
+       <x>220</x>
+       <y>-10</y>
+       <width>331</width>
        <height>71</height>
       </rect>
      </property>
@@ -319,9 +265,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <property name="geometry">
       <rect>
        <x>0</x>
-       <y>150</y>
+       <y>59</y>
        <width>791</width>
-       <height>471</height>
+       <height>561</height>
       </rect>
      </property>
      <property name="styleSheet">
@@ -344,9 +290,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <property name="geometry">
       <rect>
        <x>379</x>
-       <y>149</y>
+       <y>59</y>
        <width>451</width>
-       <height>521</height>
+       <height>611</height>
       </rect>
      </property>
      <property name="title">
@@ -356,9 +302,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <property name="geometry">
        <rect>
         <x>229</x>
-        <y>1</y>
-        <width>187</width>
-        <height>425</height>
+        <y>0</y>
+        <width>185</width>
+        <height>505</height>
        </rect>
       </property>
      </widget>
@@ -366,7 +312,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <property name="geometry">
        <rect>
         <x>230</x>
-        <y>400</y>
+        <y>480</y>
         <width>65</width>
         <height>81</height>
        </rect>
@@ -379,7 +325,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <property name="geometry">
        <rect>
         <x>292</x>
-        <y>420</y>
+        <y>500</y>
         <width>63</width>
         <height>61</height>
        </rect>
@@ -397,7 +343,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <property name="geometry">
        <rect>
         <x>352</x>
-        <y>420</y>
+        <y>500</y>
         <width>63</width>
         <height>61</height>
        </rect>
@@ -415,9 +361,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <property name="geometry">
        <rect>
         <x>2</x>
-        <y>1</y>
+        <y>0</y>
         <width>231</width>
-        <height>485</height>
+        <height>561</height>
        </rect>
       </property>
      </widget>
@@ -425,7 +371,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <property name="geometry">
        <rect>
         <x>285</x>
-        <y>365</y>
+        <y>440</y>
         <width>75</width>
         <height>24</height>
        </rect>
@@ -435,6 +381,32 @@ li.checked::marker { content: &quot;\2612&quot;; }
       </property>
      </widget>
     </widget>
+    <widget class="QPushButton" name="pushButton">
+     <property name="geometry">
+      <rect>
+       <x>610</x>
+       <y>0</y>
+       <width>93</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Окно &quot;+&quot;</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="plus_to_normal_todo">
+     <property name="geometry">
+      <rect>
+       <x>700</x>
+       <y>20</y>
+       <width>92</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Обычное окно</string>
+     </property>
+    </widget>
     <zorder>listView_4</zorder>
     <zorder>label</zorder>
     <zorder>label_2</zorder>
@@ -442,6 +414,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <zorder>cb_todo</zorder>
     <zorder>name_todo</zorder>
     <zorder>exsisting_tasks</zorder>
+    <zorder>pushButton</zorder>
+    <zorder>plus_to_normal_todo</zorder>
    </widget>
    <widget class="QGroupBox" name="diary">
     <property name="geometry">
@@ -459,7 +433,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <property name="geometry">
       <rect>
        <x>178</x>
-       <y>60</y>
+       <y>-10</y>
        <width>421</width>
        <height>71</height>
       </rect>
@@ -530,8 +504,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <widget class="QPushButton" name="schedulebtn_diary">
      <property name="geometry">
       <rect>
-       <x>728</x>
-       <y>570</y>
+       <x>730</x>
+       <y>550</y>
        <width>63</width>
        <height>63</height>
       </rect>
@@ -548,19 +522,19 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <widget class="QListWidget" name="exist_tasks_diary">
      <property name="geometry">
       <rect>
-       <x>605</x>
-       <y>149</y>
-       <width>187</width>
-       <height>425</height>
+       <x>610</x>
+       <y>59</y>
+       <width>183</width>
+       <height>514</height>
       </rect>
      </property>
     </widget>
     <widget class="QPushButton" name="todobtn_diary">
      <property name="geometry">
       <rect>
-       <x>606</x>
-       <y>570</y>
-       <width>65</width>
+       <x>610</x>
+       <y>550</y>
+       <width>63</width>
        <height>63</height>
       </rect>
      </property>
@@ -571,8 +545,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <widget class="QPushButton" name="diarybtn_diary">
      <property name="geometry">
       <rect>
-       <x>668</x>
-       <y>550</y>
+       <x>670</x>
+       <y>530</y>
        <width>63</width>
        <height>83</height>
       </rect>
@@ -590,9 +564,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <property name="geometry">
       <rect>
        <x>0</x>
-       <y>150</y>
+       <y>60</y>
        <width>791</width>
-       <height>471</height>
+       <height>551</height>
       </rect>
      </property>
      <property name="styleSheet">
@@ -614,8 +588,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <widget class="QPushButton" name="delbtn_diary">
      <property name="geometry">
       <rect>
-       <x>660</x>
-       <y>525</y>
+       <x>663</x>
+       <y>510</y>
        <width>75</width>
        <height>24</height>
       </rect>
@@ -768,6 +742,32 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <string>Воскресенье</string>
      </property>
     </widget>
+    <widget class="QPushButton" name="pushButton_3">
+     <property name="geometry">
+      <rect>
+       <x>610</x>
+       <y>0</y>
+       <width>93</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Окно &quot;+&quot;</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="plus_to_normal_diary">
+     <property name="geometry">
+      <rect>
+       <x>700</x>
+       <y>20</y>
+       <width>93</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Обычное окно</string>
+     </property>
+    </widget>
     <zorder>listView_5</zorder>
     <zorder>label_3</zorder>
     <zorder>cb_diary</zorder>
@@ -787,6 +787,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <zorder>friday</zorder>
     <zorder>saturday</zorder>
     <zorder>sunday</zorder>
+    <zorder>pushButton_3</zorder>
+    <zorder>plus_to_normal_diary</zorder>
    </widget>
    <widget class="QGroupBox" name="schedule">
     <property name="geometry">
@@ -803,8 +805,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <widget class="QLabel" name="label_7">
      <property name="geometry">
       <rect>
-       <x>150</x>
-       <y>60</y>
+       <x>120</x>
+       <y>-10</y>
        <width>501</width>
        <height>71</height>
       </rect>
@@ -847,9 +849,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <property name="geometry">
       <rect>
        <x>0</x>
-       <y>150</y>
+       <y>59</y>
        <width>381</width>
-       <height>281</height>
+       <height>482</height>
       </rect>
      </property>
     </widget>
@@ -857,9 +859,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <property name="geometry">
       <rect>
        <x>382</x>
-       <y>149</y>
+       <y>59</y>
        <width>411</width>
-       <height>481</height>
+       <height>571</height>
       </rect>
      </property>
      <property name="title">
@@ -868,19 +870,19 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <widget class="QListWidget" name="exist_tasks_schedule">
       <property name="geometry">
        <rect>
-        <x>225</x>
+        <x>229</x>
         <y>1</y>
-        <width>185</width>
-        <height>425</height>
+        <width>181</width>
+        <height>521</height>
        </rect>
       </property>
      </widget>
      <widget class="QPushButton" name="todobtn_schedule">
       <property name="geometry">
        <rect>
-        <x>226</x>
-        <y>420</y>
-        <width>65</width>
+        <x>229</x>
+        <y>500</y>
+        <width>61</width>
         <height>61</height>
        </rect>
       </property>
@@ -892,7 +894,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <property name="geometry">
        <rect>
         <x>288</x>
-        <y>420</y>
+        <y>500</y>
         <width>63</width>
         <height>61</height>
        </rect>
@@ -910,7 +912,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <property name="geometry">
        <rect>
         <x>348</x>
-        <y>393</y>
+        <y>480</y>
         <width>63</width>
         <height>81</height>
        </rect>
@@ -928,9 +930,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>1</y>
+        <y>0</y>
         <width>231</width>
-        <height>423</height>
+        <height>521</height>
        </rect>
       </property>
      </widget>
@@ -938,7 +940,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <property name="geometry">
        <rect>
         <x>5</x>
-        <y>323</y>
+        <y>420</y>
         <width>191</width>
         <height>61</height>
        </rect>
@@ -956,7 +958,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>373</y>
+        <y>470</y>
         <width>241</width>
         <height>61</height>
        </rect>
@@ -974,8 +976,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>431</y>
-        <width>227</width>
+        <y>521</y>
+        <width>230</width>
         <height>41</height>
        </rect>
       </property>
@@ -984,7 +986,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <property name="geometry">
        <rect>
         <x>280</x>
-        <y>365</y>
+        <y>450</y>
         <width>75</width>
         <height>24</height>
        </rect>
@@ -1018,7 +1020,33 @@ li.checked::marker { content: &quot;\2612&quot;; }
       </font>
      </property>
      <property name="text">
-      <string>Название:</string>
+      <string>Имя задачи:</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_5">
+     <property name="geometry">
+      <rect>
+       <x>610</x>
+       <y>0</y>
+       <width>93</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Окно &quot;+&quot;</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="plus_to_normal_schedule">
+     <property name="geometry">
+      <rect>
+       <x>700</x>
+       <y>20</y>
+       <width>91</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Обычное окно</string>
      </property>
     </widget>
     <zorder>listView_6</zorder>
@@ -1027,6 +1055,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <zorder>calendarWidget</zorder>
     <zorder>exsisting_tasks_2</zorder>
     <zorder>label_22</zorder>
+    <zorder>pushButton_5</zorder>
+    <zorder>plus_to_normal_schedule</zorder>
    </widget>
    <widget class="QGroupBox" name="results">
     <property name="geometry">
@@ -1044,7 +1074,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <property name="geometry">
       <rect>
        <x>198</x>
-       <y>60</y>
+       <y>-10</y>
        <width>391</width>
        <height>71</height>
       </rect>
@@ -1127,9 +1157,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <property name="geometry">
       <rect>
        <x>0</x>
-       <y>150</y>
+       <y>70</y>
        <width>791</width>
-       <height>471</height>
+       <height>551</height>
       </rect>
      </property>
      <property name="styleSheet">
@@ -1156,49 +1186,21 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <string>(Возможно, здесь будет график)</string>
      </property>
     </widget>
-    <widget class="QComboBox" name="grapgh_type">
-     <property name="geometry">
-      <rect>
-       <x>80</x>
-       <y>170</y>
-       <width>121</width>
-       <height>41</height>
-      </rect>
-     </property>
-    </widget>
     <widget class="QLineEdit" name="grapgh_date">
      <property name="geometry">
       <rect>
-       <x>80</x>
-       <y>230</y>
+       <x>60</x>
+       <y>80</y>
        <width>151</width>
        <height>31</height>
       </rect>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_11">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>170</y>
-       <width>71</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>График:</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_12">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>230</y>
+       <y>80</y>
        <width>71</width>
        <height>31</height>
       </rect>
@@ -1215,8 +1217,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <widget class="QLabel" name="label_13">
      <property name="geometry">
       <rect>
-       <x>240</x>
-       <y>230</y>
+       <x>230</x>
+       <y>80</y>
        <width>301</width>
        <height>31</height>
       </rect>
@@ -1247,7 +1249,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <property name="geometry">
       <rect>
        <x>198</x>
-       <y>60</y>
+       <y>0</y>
        <width>391</width>
        <height>71</height>
       </rect>
@@ -1330,9 +1332,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <property name="geometry">
       <rect>
        <x>0</x>
-       <y>150</y>
+       <y>70</y>
        <width>791</width>
-       <height>471</height>
+       <height>551</height>
       </rect>
      </property>
      <property name="styleSheet">
@@ -1375,9 +1377,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <widget class="QLabel" name="label_6">
      <property name="geometry">
       <rect>
-       <x>198</x>
-       <y>60</y>
-       <width>391</width>
+       <x>220</x>
+       <y>-10</y>
+       <width>331</width>
        <height>71</height>
       </rect>
      </property>
@@ -1389,71 +1391,6 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <property name="text">
       <string>ЗАДАЧНИК</string>
      </property>
-    </widget>
-    <widget class="QLabel" name="label_17">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>180</y>
-       <width>161</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>18</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Название:</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="addbtn_todo_2">
-     <property name="geometry">
-      <rect>
-       <x>50</x>
-       <y>520</y>
-       <width>191</width>
-       <height>61</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>20</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>ДОБАВИТЬ</string>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="cb_todo_2">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>450</y>
-       <width>291</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Выбрать уже существующую задачу</string>
-     </property>
-    </widget>
-    <widget class="QWidget" name="gridLayoutWidget_5">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>230</y>
-       <width>281</width>
-       <height>201</height>
-      </rect>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_2"/>
     </widget>
     <widget class="QListView" name="listView_9">
      <property name="geometry">
@@ -1473,10 +1410,10 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <widget class="QGroupBox" name="exsisting_tasks_3">
      <property name="geometry">
       <rect>
-       <x>610</x>
-       <y>150</y>
-       <width>181</width>
-       <height>521</height>
+       <x>607</x>
+       <y>60</y>
+       <width>184</width>
+       <height>611</height>
       </rect>
      </property>
      <property name="title">
@@ -1485,10 +1422,10 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <widget class="QListWidget" name="crits_todo">
       <property name="geometry">
        <rect>
-        <x>-5</x>
-        <y>-1</y>
-        <width>191</width>
-        <height>425</height>
+        <x>0</x>
+        <y>1</y>
+        <width>185</width>
+        <height>501</height>
        </rect>
       </property>
      </widget>
@@ -1496,8 +1433,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>410</y>
-        <width>183</width>
+        <y>500</y>
+        <width>184</width>
         <height>31</height>
        </rect>
       </property>
@@ -1509,8 +1446,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>440</y>
-        <width>183</width>
+        <y>530</y>
+        <width>184</width>
         <height>31</height>
        </rect>
       </property>
@@ -1523,9 +1460,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <property name="geometry">
       <rect>
        <x>0</x>
-       <y>150</y>
+       <y>60</y>
        <width>609</width>
-       <height>471</height>
+       <height>561</height>
       </rect>
      </property>
     </widget>
@@ -1547,6 +1484,32 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <string>Выполнено</string>
      </property>
     </widget>
+    <widget class="QPushButton" name="normal_to_plus_todo">
+     <property name="geometry">
+      <rect>
+       <x>607</x>
+       <y>20</y>
+       <width>93</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Окно &quot;+&quot;</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_8">
+     <property name="geometry">
+      <rect>
+       <x>697</x>
+       <y>0</y>
+       <width>94</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Обычное окно</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QGroupBox" name="diary_2">
     <property name="geometry">
@@ -1564,7 +1527,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <property name="geometry">
       <rect>
        <x>178</x>
-       <y>60</y>
+       <y>-10</y>
        <width>421</width>
        <height>71</height>
       </rect>
@@ -1736,9 +1699,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <property name="geometry">
       <rect>
        <x>610</x>
-       <y>149</y>
+       <y>60</y>
        <width>184</width>
-       <height>425</height>
+       <height>501</height>
       </rect>
      </property>
     </widget>
@@ -1764,9 +1727,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <property name="geometry">
       <rect>
        <x>0</x>
-       <y>150</y>
+       <y>60</y>
        <width>611</width>
-       <height>471</height>
+       <height>561</height>
       </rect>
      </property>
     </widget>
@@ -1801,6 +1764,32 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <string>Показать все задачи</string>
      </property>
     </widget>
+    <widget class="QPushButton" name="pushButton_9">
+     <property name="geometry">
+      <rect>
+       <x>698</x>
+       <y>0</y>
+       <width>94</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Обычное окно</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="normal_to_plus_diary">
+     <property name="geometry">
+      <rect>
+       <x>608</x>
+       <y>20</y>
+       <width>93</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Окно &quot;+&quot;</string>
+     </property>
+    </widget>
     <zorder>label_18</zorder>
     <zorder>cb_diary_2</zorder>
     <zorder>addbtn_diary_2</zorder>
@@ -1817,6 +1806,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <zorder>cancel_diary</zorder>
     <zorder>complete_diary</zorder>
     <zorder>show_all_tasks</zorder>
+    <zorder>pushButton_9</zorder>
+    <zorder>normal_to_plus_diary</zorder>
    </widget>
    <widget class="QGroupBox" name="schedule_2">
     <property name="geometry">
@@ -1833,10 +1824,10 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <widget class="QLabel" name="label_20">
      <property name="geometry">
       <rect>
-       <x>150</x>
-       <y>60</y>
+       <x>120</x>
+       <y>0</y>
        <width>501</width>
-       <height>71</height>
+       <height>61</height>
       </rect>
      </property>
      <property name="font">
@@ -1867,9 +1858,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <property name="geometry">
       <rect>
        <x>0</x>
-       <y>150</y>
-       <width>381</width>
-       <height>471</height>
+       <y>60</y>
+       <width>385</width>
+       <height>561</height>
       </rect>
      </property>
     </widget>
@@ -1877,9 +1868,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <property name="geometry">
       <rect>
        <x>382</x>
-       <y>149</y>
+       <y>59</y>
        <width>411</width>
-       <height>481</height>
+       <height>571</height>
       </rect>
      </property>
      <property name="title">
@@ -1891,7 +1882,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <x>225</x>
         <y>1</y>
         <width>185</width>
-        <height>425</height>
+        <height>561</height>
        </rect>
       </property>
      </widget>
@@ -1901,7 +1892,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <x>0</x>
         <y>1</y>
         <width>231</width>
-        <height>471</height>
+        <height>561</height>
        </rect>
       </property>
      </widget>
@@ -1909,7 +1900,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <property name="geometry">
        <rect>
         <x>228</x>
-        <y>441</y>
+        <y>530</y>
         <width>183</width>
         <height>31</height>
        </rect>
@@ -1922,7 +1913,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <property name="geometry">
        <rect>
         <x>228</x>
-        <y>411</y>
+        <y>500</y>
         <width>183</width>
         <height>31</height>
        </rect>
@@ -1935,7 +1926,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <property name="geometry">
        <rect>
         <x>100</x>
-        <y>410</y>
+        <y>490</y>
         <width>111</width>
         <height>41</height>
        </rect>
@@ -1950,6 +1941,32 @@ li.checked::marker { content: &quot;\2612&quot;; }
       </property>
      </widget>
     </widget>
+    <widget class="QPushButton" name="pushButton_11">
+     <property name="geometry">
+      <rect>
+       <x>700</x>
+       <y>0</y>
+       <width>94</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Обычное окно</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="normal_to_plus_schedule">
+     <property name="geometry">
+      <rect>
+       <x>610</x>
+       <y>20</y>
+       <width>93</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Окно &quot;+&quot;</string>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -1961,6 +1978,18 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <height>22</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menufwdnw">
+    <property name="title">
+     <string>fwdnw</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menudnwdjnw">
+    <property name="title">
+     <string>dnwdjnw</string>
+    </property>
+   </widget>
+   <addaction name="menufwdnw"/>
+   <addaction name="menudnwdjnw"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
