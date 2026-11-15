@@ -1,11 +1,10 @@
-import sys
+from sys import argv, exit
 from io import StringIO
-import datetime as dt
 from PyQt6.QtWidgets import QMainWindow, QListWidgetItem, QApplication, QMenuBar, QLineEdit, QMessageBox
 from PyQt6.QtGui import QColor, QBrush
 from PyQt6.QtCore import QTime, QDate
 from PyQt6 import uic
-import csv
+from csv import reader, writer
 from random import choice
 
 
@@ -22,18 +21,8 @@ from random import choice
 
 # TODO: сделать так, что если пользователь изменил кол-во критериев, то была возможность отредактировать бывшие критерии
 
-class TooManyCritsError(Exception):
-    """Вызывается тогда, когда слишком много критериев"""
-    pass
-
-
 class WrongValue(Exception):
     """Вызывается тогда, когда в числовые значения критериев ввели неправильные критерии"""
-    pass
-
-
-class IdenticalNames(Exception):
-    """Вызывается тогда, когда у создаваемой задачи то же имя, что и у уже существующей"""
     pass
 
 
@@ -59,7 +48,8 @@ class OmniTracker(QMainWindow):
         self.setFixedHeight(642)
         self.setFixedWidth(791)
         self.setWindowTitle('OmniTracker')
-        self.todays = dt.datetime.strftime(dt.date.today(), '%d-%m-%Y')
+        self.today_weekday = str(QDate.currentDate().dayOfWeek())
+        self.todays = QDate.currentDate()
         self.date.setText(f'{self.todays}')
 
         self.todo_plus.hide()
@@ -92,13 +82,6 @@ class OmniTracker(QMainWindow):
             crit.hide()
             y_move += 53
 
-        self.criterions = {  # численные значения критериев
-            'criterion1': 0,
-            'criterion2': 0,
-            'criterion3': 0,
-            'criterion4': 0,
-            'criterion5': 0
-        }
         # здесь будут записываться данные с файлов, чтобы читать их и не нужно было при каждой операции открывать файлы
         self.todo_file = []
         self.diary_file = []
@@ -213,8 +196,8 @@ class OmniTracker(QMainWindow):
                 self.today_list.addItem('\n\n')
 
                 for task in self.schedule_file[1:]:  # задачи из планировщика
-                    if (dt.datetime.strptime(self.todays, '%d-%m-%Y')
-                            == dt.datetime.strptime(task[1], '%d-%m-%Y')):
+                    # проверяем на то, что сегодня -- тот день, в которую должна высвечиваться задача
+                    if self.todays == QDate.fromString(task[1], 'dd-MM-yyyy'):
                         t = QListWidgetItem(task[0])
                         font = t.font()
                         font.setPointSize(12)  # размер в пунктах
@@ -224,7 +207,8 @@ class OmniTracker(QMainWindow):
 
                 for task in self.diary_file[1:]: # задачи из ежедневника
                     days_active = task[2:]
-                    if str(dt.date.today().isoweekday()) in days_active and task[1] != self.todays:
+                    # проверяем на то, что сегодня -- тот день недели, в которую должна высвечиваться задача
+                    if str(self.todays) in days_active and task[1] != self.todays:
                         self.today_list.addItem(task[0])
 
             case 't':
@@ -403,8 +387,7 @@ class OmniTracker(QMainWindow):
                 raise IncompleteInput
             date = self.calendarWidget.selectedDate().toString('dd-MM-yyyy')
             time = self.timeEdit.time().toString('HH:mm')
-            if (dt.datetime.strptime(self.todays, '%d-%m-%Y')  # проверяем, назначается задача ли в прошлое
-                    > dt.datetime.strptime(self.calendarWidget.selectedDate().toString('dd-MM-yyyy'), '%d-%m-%Y')):
+            if self.todays > self.calendarWidget.selectedDate():  # проверяем, назначается задача ли в прошлое
                 reply = QMessageBox.question(self, 'Добавление', 'Задача назначается в прошлое. '
                                                                  'За её выполнение дастся только половина'
                                                                  ' от изначальной суммы баллов. Назначить всё равно?',
@@ -462,7 +445,7 @@ class OmniTracker(QMainWindow):
 
     def show_tasks(self, tool_type):
         """Показать уже существующие задачи"""
-        if 't' in tool_type:
+        if 't' in tool_type:  # если выбран задачник
             rdr_todo = self.todo_file[1:]
             if tool_type == 't':
                 if self.cb_todo.isChecked():
@@ -480,20 +463,23 @@ class OmniTracker(QMainWindow):
                 for task in rdr_todo:
                     self.tasks_todo.addItem(task[0])
 
-        elif 'd' in tool_type:
+        elif 'd' in tool_type:  # если выбран ежедневник
             rdr_diary = self.diary_file[1:]
-            if tool_type == 'd':
+
+            if tool_type == 'd':  # если это "+"
                 if self.cb_diary.isChecked():
                     self.exist_tasks_diary.clear()
                     for task in rdr_diary:
                         self.exist_tasks_diary.addItem(task[0])
                 else:
                     self.exist_tasks_diary.clear()
-            elif tool_type == 'd2':
+
+            elif tool_type == 'd2':  # если это обычное окно
                 self.tasks_diary.clear()
                 for task in rdr_diary:
 
-                    if task[1] == self.todays and str(dt.date.today().isoweekday()) in task[2:]:
+                    if (task[1] == self.todays.toString('dd-MM-yyyy')  # проверяем, что эта задача на сегодня и она
+                            and str(QDate.currentDate().dayOfWeek()) in task[2:]): # выполнена
                         item = QListWidgetItem(task[0])
                         item.setForeground(QBrush(QColor("gray")))
 
@@ -502,14 +488,14 @@ class OmniTracker(QMainWindow):
                         item.setFont(font)
 
                         self.tasks_diary.addItem(item)
-                    elif str(dt.date.today().isoweekday()) in task[2:]:
+                    elif self.today_weekday in task[2:]:
                         self.tasks_diary.addItem(task[0])
 
             elif tool_type == 'd22':
                 self.tasks_diary.clear()
                 if self.show_all_tasks.isChecked():
                     for task in rdr_diary:
-                        if task[1] == self.todays or str(dt.date.today().isoweekday()) not in task[2:]:
+                        if task[1] == self.todays or self.today_weekday not in task[2:]:
                             item = QListWidgetItem(task[0])
                             item.setForeground(QBrush(QColor("gray")))
 
@@ -520,10 +506,11 @@ class OmniTracker(QMainWindow):
                             self.tasks_diary.addItem(item)
                         else:
                             self.tasks_diary.addItem(task[0])
+
                 else:
                     self.tasks_diary.clear()
                     for task in rdr_diary:
-                        if task[1] == self.todays and str(dt.date.today().isoweekday()) in task[2:]:
+                        if task[1] == self.todays and self.today_weekday in task[2:]:
                             item = QListWidgetItem(task[0])
                             item.setForeground(QBrush(QColor("gray")))
 
@@ -532,12 +519,13 @@ class OmniTracker(QMainWindow):
                             item.setFont(font)
 
                             self.tasks_diary.addItem(item)
-                        elif str(dt.date.today().isoweekday()) in task[2:]:
+                        elif self.today_weekday in task[2:]:
                             self.tasks_diary.addItem(task[0])
 
-        elif 'sch' in tool_type:
+        elif 'sch' in tool_type:  # если это планировщик
             rdr_schedule = self.schedule_file[1:]
-            if tool_type == 'sch':
+
+            if tool_type == 'sch':  # если это окно "+"
                 if self.cb_schedule.isChecked():
                     self.exist_tasks_schedule.clear()
                     for task in rdr_schedule:
@@ -548,13 +536,11 @@ class OmniTracker(QMainWindow):
                     self.name_schedule.setText('')
                     self.exist_tasks_schedule.clear()
 
-            elif tool_type == 'sch2':
+            elif tool_type == 'sch2':  # если это обычное окно
                 self.tasks_schedule.clear()
+                selected = self.calendarWidget_2.selectedDate()
                 for task in rdr_schedule:
-                    if (dt.datetime.strptime(task[1], '%d-%m-%Y')
-                            == dt.datetime(self.calendarWidget_2.selectedDate().year(),
-                                           self.calendarWidget_2.selectedDate().month(),
-                                           self.calendarWidget_2.selectedDate().day())):
+                    if QDate.fromString(task[1], 'dd-MM-yyyy') == selected:
                         self.tasks_schedule.addItem(f'{task[0]}\n{task[2]}')
 
     def show_crits(self, tool_type: str):
@@ -615,19 +601,19 @@ class OmniTracker(QMainWindow):
                 days = task[2:]
                 self.days_diary.clear()
                 if '1' in days:
-                    self.days_diary.addItem(f'Понедельник')
+                    self.days_diary.addItem('Понедельник')
                 if '2' in days:
-                    self.days_diary.addItem(f'Вторник')
+                    self.days_diary.addItem('Вторник')
                 if '3' in days:
-                    self.days_diary.addItem(f'Среда')
+                    self.days_diary.addItem('Среда')
                 if '4' in days:
-                    self.days_diary.addItem(f'Четверг')
+                    self.days_diary.addItem('Четверг')
                 if '5' in days:
-                    self.days_diary.addItem(f'Пятница')
+                    self.days_diary.addItem('Пятница')
                 if '6' in days:
-                    self.days_diary.addItem(f'Суббота')
+                    self.days_diary.addItem('Суббота')
                 if '7' in days:
-                    self.days_diary.addItem(f'Воскресенье')
+                    self.days_diary.addItem('Воскресенье')
 
         if 'sch' in tool_type:
             _, rdr_c = self.read_file('criterions.csv')
@@ -782,7 +768,7 @@ class OmniTracker(QMainWindow):
                     break
 
     def complete(self, tool_type):
-        if tool_type == 't':
+        if tool_type == 't':  # если это задачник
             item = self.tasks_todo.currentItem()
             if item is None:
                 QMessageBox.warning(self, 'Выполнение', 'Задача не выбрана!')
@@ -813,7 +799,7 @@ class OmniTracker(QMainWindow):
             self.show_tasks('t2')
             self.show_crits('t2')
 
-        elif tool_type == 'd':
+        elif tool_type == 'd':  # если это ежедневник
             item = self.tasks_diary.currentItem()
             if item is None:
                 QMessageBox.warning(self, 'Выполнение', 'Задача не выбрана!')
@@ -845,7 +831,7 @@ class OmniTracker(QMainWindow):
             self.write_file('diary.csv', header, last_rows)
             self.show_tasks('d2')
 
-        elif tool_type == 'sch':
+        elif tool_type == 'sch':  # если это планировщик
             item = self.tasks_schedule.currentItem()
             if item is None:
                 QMessageBox.warning(self, 'Выполнение', 'Задача не выбрана!')
@@ -855,8 +841,7 @@ class OmniTracker(QMainWindow):
             item_name = ' '.join(item.text().split('\n')[:-1])
             task = [x for x in rdr_schedule if x and x[0] == item_name]
 
-            if (dt.datetime.strptime(self.todays, '%d-%m-%Y')
-                    <= dt.datetime.strptime(task[0][1], '%d-%m-%Y')):
+            if self.todays <= QDate.fromString(task[0][1], 'dd-MM-yyyy'):
                 summa = sum(int(n) for n in task[0][3:] if n)
                 QMessageBox.warning(self, 'Выполнение', f"Задача {task[0][0]} выполнена!")
             else:
@@ -886,11 +871,11 @@ class OmniTracker(QMainWindow):
     def read_file(self, file):
         """читает файл, а также избавляется от лишних пробелов, отступов и прочих символов"""
         with open(file, 'r', encoding='utf8') as f:
-            reader = csv.reader(f, delimiter=';')
-            header = next(reader)
+            rdr = reader(f, delimiter=';')
+            header = next(rdr)
             nr = [
                 [field.strip() for field in row if field.strip()]
-                for row in reader
+                for row in rdr
                 if any(field.strip() for field in row)  # пропускаем пустые строки
             ]
             return header, nr
@@ -898,9 +883,9 @@ class OmniTracker(QMainWindow):
     def write_file(self, file, header, write):
         """пишет файл, после чего сразу же перезаписывает соответствующую инструменту переменную для хранения данных"""
         with open(file, 'w', encoding='utf8') as f:
-            writer = csv.writer(f, delimiter=';')
-            writer.writerow(header)
-            writer.writerows(write)
+            wrt = writer(f, delimiter=';')
+            wrt.writerow(header)
+            wrt.writerows(write)
         if file == 'todo.csv':
             self.todo_file = [header] + write
         elif file == 'diary.csv':
@@ -908,8 +893,9 @@ class OmniTracker(QMainWindow):
         elif file == 'schedule.csv':
             self.schedule_file = [header] + write
 
+
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
+    app = QApplication(argv)
     om = OmniTracker()
 
     _, nr = om.read_file('phylosophy.txt')
@@ -925,9 +911,11 @@ if __name__ == '__main__':
     om.diary_file = [head_diary] + rdr_diary
     om.write_file('diary.csv', head_diary, rdr_diary)
 
+    today_weekday = str(QDate.currentDate().dayOfWeek())
+
     for task in rdr_diary:  # добавляем задачи из ежедневника на главную панель
         days_active = task[2:]
-        if str(dt.date.today().isoweekday()) in days_active and task[1] != om.todays:
+        if today_weekday in days_active and task[1] != om.todays:
             om.today_list.addItem(task[0])
 
     head_schedule, rdr_schedule = om.read_file('schedule.csv')
@@ -938,4 +926,4 @@ if __name__ == '__main__':
     om.write_file('graph1.csv', headd, rdrr)
     om.open('g')
     om.show()
-    sys.exit(app.exec())
+    exit(app.exec())
