@@ -9,6 +9,7 @@ from random import choice
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 
+
 # TODO: сделать так, чтобы панели, на которых выбираются уже существующие задачи выдвигались только тогда, когда
 # TODO: соответствующие checkbox'ы нажаты
 
@@ -48,13 +49,14 @@ class OmniTracker(QMainWindow):
         with open('OmniTracker.ui', 'r', encoding='utf8') as f:
             ui_data = f.read()
             uic.loadUi(StringIO(ui_data), self)
-        self.setFixedHeight(642)
+        self.setFixedHeight(662)
         self.setFixedWidth(791)
         self.setWindowTitle('OmniTracker')
         self.today_weekday = str(QDate.currentDate().dayOfWeek())
         self.todays = QDate.currentDate()
         self.qtoday = QDate.toString(self.todays, 'dd-MM-yyyy')
         self.date.setText(f'{self.qtoday}')
+        self.is_plus_ready = False  # для того, чтобы кнопочка "+" на глав панеле
 
         self.todo_plus.hide()
         self.diary_plus.hide()
@@ -176,7 +178,9 @@ class OmniTracker(QMainWindow):
         self.tasks_schedule.itemClicked.connect(lambda: self.show_crits('sch2'))
 
         # --------------------------Графики---------------------------------------
-        self.current_graph = self.make_graph(self.general, 0, 85, 450, 400)
+
+        self.current_graph = self.make_graph(self.general, 0, 90, 487, 348)
+
     # =========================== ФУНКЦИИ ==========================================
 
     def open(self, window):  # открывает вкладки
@@ -189,6 +193,7 @@ class OmniTracker(QMainWindow):
         self.cb_todo.setChecked(False)
         self.cb_schedule.setChecked(False)
         self.cb_diary.setChecked(False)
+        self.show_all_tasks.setChecked(False)
 
         self.exist_tasks_todo.clear()
         self.exist_tasks_diary.clear()
@@ -218,7 +223,7 @@ class OmniTracker(QMainWindow):
                         t.setFont(font)
                         self.today_list.addItem(t)
 
-                for task in self.diary_file[1:]: # задачи из ежедневника
+                for task in self.diary_file[1:]:  # задачи из ежедневника
                     days_active = task[2:]
                     # проверяем на то, что сегодня -- тот день недели, в которую должна высвечиваться задача
                     if self.today_weekday in days_active and task[1] != self.todays:
@@ -307,7 +312,7 @@ class OmniTracker(QMainWindow):
 
             new_row = [
                 self.name_todo.text().strip(), fnum if True else '0', snum if True else '0', tnum if True else '0',
-                frnum if True else '0', fvnum if True else '0',]
+                frnum if True else '0', fvnum if True else '0', ]
             rn.append(new_row)
             self.write_file('todo.csv', header, rn)
 
@@ -492,7 +497,7 @@ class OmniTracker(QMainWindow):
                 for task in rdr_diary:
 
                     if (task[1] == self.todays.toString('dd-MM-yyyy')  # проверяем, что эта задача на сегодня и она
-                            and str(QDate.currentDate().dayOfWeek()) in task[2:]): # выполнена
+                            and str(QDate.currentDate().dayOfWeek()) in task[2:]):  # выполнена
                         item = QListWidgetItem(task[0])
                         item.setForeground(QBrush(QColor("gray")))
 
@@ -572,10 +577,16 @@ class OmniTracker(QMainWindow):
                     crit.setText(num)
 
             if tool_type == 't2':
+                cur = self.tasks_todo.currentItem()
+                self.crits_todo.clear()
+                if cur is None:
+                    return
                 for i in rdr_t:
-                    if i[0] == self.tasks_todo.currentItem().text():
+                    if i[0] == cur.text():
                         task = i
                         break
+                if not task:
+                    return
                 self.crits_todo.clear()
                 for i, num in zip(rdr_c, task[1:]):
                     self.crits_todo.addItem(f'{i[0]}:\n   {num}')
@@ -642,11 +653,14 @@ class OmniTracker(QMainWindow):
                     crit.setText(num)
 
             if tool_type == 'sch2':
+                self.crits_schedule.clear()
+                cur = self.tasks_schedule.currentItem()
                 for i in rdr_sch:
-                    if self.tasks_schedule.currentItem() and i[0] == self.tasks_schedule.currentItem().text():
+                    task_name = ' '.join(cur.text().split('\n')[:-1]).strip()
+                    task = []
+                    if i[0] == task_name:
                         task = i
                         break
-                self.crits_schedule.clear()
                 for i, num in zip(rdr_c, task[3:]):
                     self.crits_schedule.addItem(f'{i[0]}:\n   {num}')
 
@@ -708,8 +722,10 @@ class OmniTracker(QMainWindow):
             if reply != QMessageBox.StandardButton.Yes:
                 return
 
+            task_name = ' '.join(item_schedule.text().split('\n')[:-1]).strip()
+
             header_schedule, reader_schedule = self.schedule_file[0], self.schedule_file[1:]
-            new_rows = [row for row in reader_schedule if row[0] != item_schedule.text()]
+            new_rows = [row for row in reader_schedule if row[0] != task_name]
 
             self.write_file('schedule.csv', header_schedule, new_rows)
 
@@ -719,6 +735,7 @@ class OmniTracker(QMainWindow):
                 self.show_tasks('sch')
             elif tool_type == 'sch2':
                 self.tasks_schedule.takeItem(self.tasks_schedule.row(item_schedule))
+                self.crits_schedule.clear()
                 self.show_tasks('sch2')
 
     def redo(self, tool_type, task):  # изменяет задачу, направляя её во вкладку "+"
@@ -763,13 +780,13 @@ class OmniTracker(QMainWindow):
                             self.saturday.setChecked(True)
                         if '7' in days:
                             self.sunday.setChecked(True)
-                            
+
         elif 'sch' in tool_type:
             self.open('sch')
             n_task = task.split('\n')[0]
             self.name_schedule.setText(n_task)
             dt_task = [x for x in self.schedule_file if x[0].strip() == n_task]  # для того, чтобы найти время и дату
-            rdr = self.schedule_file[1:]  
+            rdr = self.schedule_file[1:]
             t_str = dt_task[0][2].strip()
             d_str = dt_task[0][1].strip()
             self.calendarWidget.setSelectedDate(QDate.fromString(d_str, 'dd-MM-yyyy'))
@@ -792,7 +809,7 @@ class OmniTracker(QMainWindow):
             task = [x for x in rdr_todo if x and x[0] == item.text()]
 
             summa = sum(int(n) for n in task[0][1:] if n)
-            QMessageBox.warning(self, 'Выполнение', f"Задача {task[0][0]} выполнена! Начислено: {summa}")
+            QMessageBox.information(self, 'Выполнение', f"Задача {task[0][0]} выполнена! Начислено: {summa}")
             new_rows = [row for row in rdr_todo if row[0] != item.text()]
 
             updated_res = []  # обновление graph1
@@ -811,6 +828,7 @@ class OmniTracker(QMainWindow):
 
             self.show_tasks('t2')
             self.show_crits('t2')
+            self.current_graph = self.make_graph(self.general, 0, 90, 487, 348)
 
         elif tool_type == 'd':  # если это ежедневник
             item = self.tasks_diary.currentItem()
@@ -821,12 +839,12 @@ class OmniTracker(QMainWindow):
 
             updated_row = [x for x in rdr if x and x[0] == item.text()]
             last_rows = [x for x in rdr if x and x[0] != item.text()]  # предыдущие строки, чтобы они не утерялись
-            QMessageBox.warning(self, 'Выполнение', f"Задача {updated_row[0][0]} выполнена!")
             updated_row[0][1] = self.qtoday
             last_rows.append(*updated_row)  # перемещаем выполненную задачу в конец
             self.write_file('diary.csv', header, last_rows)
 
             self.show_tasks('d2')
+            self.show_all_tasks.setChecked(False)
 
         elif tool_type == 'd22':  # если надо отменить выполнение задачи из ежедневника
             item = self.tasks_diary.currentItem()
@@ -842,6 +860,7 @@ class OmniTracker(QMainWindow):
             last_rows.append(*updated_task)
             self.write_file('diary.csv', header, last_rows)
             self.show_tasks('d2')
+            self.show_all_tasks.setChecked(False)
 
         elif tool_type == 'sch':  # если это планировщик
             item = self.tasks_schedule.currentItem()
@@ -855,11 +874,12 @@ class OmniTracker(QMainWindow):
 
             if self.todays <= QDate.fromString(task[0][1], 'dd-MM-yyyy'):
                 summa = sum(int(n) for n in task[0][3:] if n)
-                QMessageBox.warning(self, 'Выполнение', f"Задача {task[0][0]} выполнена!")
+                QMessageBox.information(self, 'Выполнение', f"Задача {task[0][0]} выполнена! Начислено: {summa}")
             else:
-                QMessageBox.information(self, 'Выполнение', 'У задачи истёк дедлайн, поэтому '
-                                                        'за её выполнение вы получили в два раза меньше суммы баллов')
                 summa = sum(int(n) for n in task[0][3:] if n) // 2
+                QMessageBox.information(self, 'Выполнение', f'У задачи истёк дедлайн, поэтому '
+                                                            f'за её выполнение вы получили в два раза меньше суммы баллов:'
+                                                            f' {summa}')
 
             new_rows = [row for row in rdr_schedule if row[0] != item_name]
 
@@ -878,7 +898,8 @@ class OmniTracker(QMainWindow):
             self.write_file('schedule.csv', header_schedule, new_rows)  # пишем файл для задачника
 
             self.show_tasks('sch2')
-            self.show_crits('sch2')
+            self.crits_schedule.clear()
+            self.current_graph = self.make_graph(self.general, 0, 90, 487, 348)
 
     # ----------------------------------Чтение файлов-----------------------------------
 
@@ -928,7 +949,7 @@ class OmniTracker(QMainWindow):
         values = [v for _, v in points]  # баллы
         ax.plot(dates, values, marker='o', linewidth=2, color='steelblue')
         ax.fill_between(range(len(values)), values, alpha=0.15, color='steelblue')
-        ax.set_title('Тестовый график', fontsize=10)
+        ax.set_title('Успеваемость по дням', fontsize=10)
         ax.set_ylabel('Баллы', fontsize=9)
         ax.grid(True, alpha=0.3)
         ax.tick_params(axis='x', rotation=45, labelsize=7)
@@ -946,6 +967,7 @@ class OmniTracker(QMainWindow):
         self.draw_graph(fig)
         canvas.draw()
         return canvas
+
 
 if __name__ == '__main__':
     app = QApplication(argv)
