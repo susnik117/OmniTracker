@@ -573,18 +573,17 @@ class OmniTracker(QMainWindow):
     def delete_tasks(self, tool_type):
         """Удалить уже существующие задачи"""
         if 't' in tool_type:
-            item = self.exist_tasks_todo.currentItem().text() if tool_type == 't'\
+            task_name = self.exist_tasks_todo.currentItem().text() if tool_type == 't'\
                 else self.tasks_todo.currentItem().text()
-            if item is None:
+            if task_name is None:
                 QMessageBox.warning(self, 'Удаление', 'Задача не выбрана!')
                 return
             reply = QMessageBox.question(self, 'Удаление',
-                                         f'Вы точно хотите удалить задачу {item}?',
+                                         f'Вы точно хотите удалить задачу {task_name}?',
                                          QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
             if reply != QMessageBox.StandardButton.Yes:
                 return
-            self.cur.execute("""DELETE FROM todo WHERE name = ?""", (item,))
-
+            self.cur.execute("""DELETE FROM todo WHERE name = ?""", (task_name,))
             self.con.commit()
 
             if tool_type == 't':
@@ -597,18 +596,17 @@ class OmniTracker(QMainWindow):
                 self.show_tasks('t2')
 
         elif 'd' in tool_type:
-            item_diary = self.exist_tasks_diary.currentItem().text() if tool_type == 'd'\
+            task_name = self.exist_tasks_diary.currentItem().text() if tool_type == 'd'\
                 else self.tasks_diary.currentItem().text()
-            if item_diary is None:
+            if task_name is None:
                 QMessageBox.warning(self, 'Удаление', 'Задача не выбрана!')
                 return
-            reply = QMessageBox.question(self, 'Удаление', f'Вы точно хотите удалить задачу {item_diary}?',
+            reply = QMessageBox.question(self, 'Удаление', f'Вы точно хотите удалить задачу {task_name}?',
                                          QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
             if reply != QMessageBox.StandardButton.Yes:
                 return
 
-            self.cur.execute("""DELETE FROM diary WHERE name = ?""", (item_diary,))
-
+            self.cur.execute("""DELETE FROM diary WHERE name = ?""", (task_name,))
             self.con.commit()
 
             if tool_type == 'd':
@@ -620,33 +618,31 @@ class OmniTracker(QMainWindow):
                 self.show_tasks('d2')
 
         if 'sch' in tool_type:
-            item_schedule = self.exist_tasks_schedule.currentItem() if tool_type == 'sch' else self.tasks_schedule.currentItem()
+            item_schedule = self.exist_tasks_schedule.currentItem().text() if tool_type == 'sch'\
+                else self.tasks_schedule.currentItem().text()
             if item_schedule is None:
                 QMessageBox.warning(self, 'Удаление', 'Задача не выбрана!')
                 return
 
-            reply = QMessageBox.question(self, 'Удаление', f'Вы точно хотите удалить задачу?',
+            task_name = ' '.join(item_schedule.split('\n')[:-1]).strip()
+
+            reply = QMessageBox.question(self, 'Удаление', f'Вы точно хотите удалить задачу {task_name}?',
                                          QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
             if reply != QMessageBox.StandardButton.Yes:
                 return
 
-            task_name = ' '.join(item_schedule.text().split('\n')[:-1]).strip()
-
-            header_schedule, reader_schedule = self.schedule_file[0], self.schedule_file[1:]
-            new_rows = [row for row in reader_schedule if row[0] != task_name]
-
-            self.write_file('schedule.csv', header_schedule, new_rows)
+            self.cur.execute("""DELETE FROM diary WHERE name = ?""", (task_name,))
+            self.con.commit()
 
             if tool_type == 'sch':
-                self.exist_tasks_schedule.takeItem(self.exist_tasks_schedule.row(item_schedule))
                 self.crits_schedule.clear()
                 self.show_tasks('sch')
             elif tool_type == 'sch2':
-                self.tasks_schedule.takeItem(self.tasks_schedule.row(item_schedule))
                 self.crits_schedule.clear()
                 self.show_tasks('sch2')
 
-    def redo(self, tool_type, task):  # изменяет задачу, направляя её во вкладку "+"
+    def redo(self, tool_type, task):
+        """изменяет задачу, направляя пользователя во вкладку "+" соответствующего инструмента"""
         if task is None:
             QMessageBox.warning(self, 'Изменение', 'Задача не выбрана!')
             return
@@ -655,55 +651,43 @@ class OmniTracker(QMainWindow):
             self.open('t')
             self.name_todo.setText(task)
 
-            rdr = self.todo_file[1:]
-            for i in rdr:
-                if i[0] == task:
-                    for crit, num in zip(self.crits, i[1:]):
-                        crit.setText(str(num))
-                    break
+            rdr = self.cur.execute("""SELECT name, crit1, crit2, crit3, crit4, crit5 FROM todo
+                                    WHERE name = ?""", (task,)).fetchone()
+            for crit, num in zip(self.crits, rdr[1:]):
+                crit.setText(str(num))
 
         elif 'd' in tool_type:
             self.open('d')
             self.name_diary.setText(task)
 
-            rdr = self.diary_file[1:]
+            rdr = self.cur.execute('''SELECT name, days_of_week FROM diary WHERE name = ?''', (task,)).fetchall()
 
-            for day in self.days:
-                day.setChecked(False)
-
-                for i in rdr:
-                    if i[0] == task:
-                        days = i[2:]
-                        if '1' in days:
-                            self.monday.setChecked(True)
-                        if '2' in days:
-                            self.tuesday.setChecked(True)
-                        if '3' in days:
-                            self.wednesday.setChecked(True)
-                        if '4' in days:
-                            self.thursday.setChecked(True)
-                        if '5' in days:
-                            self.friday.setChecked(True)
-                        if '6' in days:
-                            self.saturday.setChecked(True)
-                        if '7' in days:
-                            self.sunday.setChecked(True)
+            if '1' in rdr[1]:
+                self.monday.setChecked(True)
+            if '2' in rdr[1]:
+                self.tuesday.setChecked(True)
+            if '3' in rdr[1]:
+                self.wednesday.setChecked(True)
+            if '4' in rdr[1]:
+                self.thursday.setChecked(True)
+            if '5' in rdr[1]:
+                self.friday.setChecked(True)
+            if '6' in rdr[1]:
+                self.saturday.setChecked(True)
+            if '7' in rdr[1]:
+                self.sunday.setChecked(True)
 
         elif 'sch' in tool_type:
             self.open('sch')
-            n_task = task.split('\n')[0]
+            n_task = task.split('\n')[0]  # имя задачи
             self.name_schedule.setText(n_task)
-            dt_task = [x for x in self.schedule_file if x[0].strip() == n_task]  # для того, чтобы найти время и дату
-            rdr = self.schedule_file[1:]
-            t_str = dt_task[0][2].strip()
-            d_str = dt_task[0][1].strip()
-            self.calendarWidget.setSelectedDate(QDate.fromString(d_str, 'dd-MM-yyyy'))
-            self.timeEdit.setTime(QTime.fromString(t_str, 'HH:mm'))
-            for i in rdr:
-                if i[0] == n_task:
-                    for crit, num in zip(self.crits, i[3:]):
-                        crit.setText(str(num))
-                    break
+            rdr = self.cur.execute("""SELECT name, date, time, crit1, crit2, crit3, crit4, crit5 FROM schedule
+                                             WHERE name = ?""", (n_task,)).fetchone()
+            self.calendarWidget.setSelectedDate(QDate.fromString(rdr[1], 'dd-MM-yyyy'))
+            self.timeEdit.setTime(QTime.fromString(rdr[2], 'HH:mm'))
+
+            for crit, num in zip(self.crits, rdr[3:]):
+                crit.setText(str(num))
 
     def complete(self, tool_type):
         if tool_type == 't':  # если это задачник
