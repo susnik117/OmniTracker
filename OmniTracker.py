@@ -7,15 +7,13 @@ from PyQt6 import uic
 import sqlite3
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
+import matplotlib.dates as mdates
 
+
+# TODO: добавить отображения состояния (при добавлении задачи/выполнении/изменений настроек) в статус-бар
 
 # TODO: сделать так, чтобы панели, на которых выбираются уже существующие задачи выдвигались только тогда, когда
 # TODO: соответствующие checkbox'ы нажаты
-
-# TODO: сделать так, чтобы на вкладках с инструментами можно было переключаться между стандартной вкладкой и вкладкой +
-
-# TODO: сейчас у меня так, что когда я перехожу между вкладками, то листы, на которых есть критерии, перезаполняются
-#  Надо сделать проверку, что лист уже заполнен и в зависимости от результата заполнять или не заполнять
 
 # TODO: можно сделать так, что некоторые из элементов интерфейса (например, QLineEdit для критериев) создавались бы не
 #  в программе, а в designer'е
@@ -24,9 +22,12 @@ from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 
 # TODO: сделать так, что при повторном нажатии на "+" на главной панели кнопки закрывались
 
+# TODO: добавить горячие клавиши (Ctrl + Z, Ctrl + C, Ctrl + V, Ctrl + x)
+
+# TODO: пофиксить баг: если все критерии равны нулю, то программа в complete упадёт
 
 class OmniTracker(QMainWindow):
-    """Класс, выполняющий функционал предложения"""
+    """Класс, выполняющий функционал приложения"""
 
     # ================================ ИНИЦИАЛИЗАЦИЯ ==================================
     def __init__(self):
@@ -41,7 +42,8 @@ class OmniTracker(QMainWindow):
         self.todays = QDate.currentDate()
         self.qtoday = QDate.toString(self.todays, 'dd-MM-yyyy')
         self.date.setText(f'{self.qtoday}')
-        self.is_plus_ready = False  # для того, чтобы кнопочка "+" на глав панеле
+        self.week_offset = 0  # для выбора недели в графиках
+        self.is_plus_ready = False
         self.con = sqlite3.connect('tasks.sql')
         self.cur = self.con.cursor()  # курсор
 
@@ -161,7 +163,11 @@ class OmniTracker(QMainWindow):
 
         # --------------------------Графики---------------------------------------
 
-       # self.current_graph = self.make_graph(self.general, 0, 90, 487, 348)
+        self.current_graph = self.make_graph(self.general, 0, 90, 487, 348)
+        self.prev_week_btn.setText('<-')
+        self.prev_week_btn.clicked.connect(self.prev_week)
+        self.next_week_btn.setText('->')
+        self.next_week_btn.clicked.connect(self.next_week)
 
     # =========================== ФУНКЦИИ ==========================================
 
@@ -283,8 +289,9 @@ class OmniTracker(QMainWindow):
 
         except sqlite3.IntegrityError:
             answer = QMessageBox.question(self, 'Добавление', f'Задача с именем {self.name_todo.text()} уже существует.'
-                                                     f' Вы хотите переписать её?', QMessageBox.StandardButton.Yes |
-                                QMessageBox.StandardButton.No)
+                                                              f' Вы хотите переписать её?',
+                                          QMessageBox.StandardButton.Yes |
+                                          QMessageBox.StandardButton.No)
             if answer != QMessageBox.StandardButton.Yes:
                 return
             self.cur.execute("""UPDATE todo SET crit1 = ?, crit2 = ?, crit3 = ?, crit4 = ?, crit5 = ?
@@ -307,9 +314,9 @@ class OmniTracker(QMainWindow):
             return
         try:
             days_active = ''.join(['1' if self.monday.isChecked() else '', '2' if self.tuesday.isChecked() else '',
-                    '3' if self.wednesday.isChecked() else '', '4' if self.thursday.isChecked() else '',
-                    '5' if self.friday.isChecked() else '', '6' if self.saturday.isChecked() else '',
-                    '7' if self.sunday.isChecked() else ''])  # проверяем, в какие дни активна задача
+                                   '3' if self.wednesday.isChecked() else '', '4' if self.thursday.isChecked() else '',
+                                   '5' if self.friday.isChecked() else '', '6' if self.saturday.isChecked() else '',
+                                   '7' if self.sunday.isChecked() else ''])  # проверяем, в какие дни активна задача
 
             self.cur.execute("""INSERT INTO diary(name, days_of_week) VALUES(?, ?)""",
                              (self.name_diary.text(), days_active))
@@ -317,9 +324,10 @@ class OmniTracker(QMainWindow):
             self.con.commit()
 
         except sqlite3.IntegrityError:
-            answer = QMessageBox.question(self, 'Добавление', f'Задача с именем {self.name_diary.text()} уже существует.'
-                                                     f' Вы хотите переписать её?', QMessageBox.StandardButton.Yes |
-                                QMessageBox.StandardButton.No)
+            answer = QMessageBox.question(self, 'Добавление',
+                                          f'Задача с именем {self.name_diary.text()} уже существует.'
+                                          f' Вы хотите переписать её?', QMessageBox.StandardButton.Yes |
+                                          QMessageBox.StandardButton.No)
             if answer != QMessageBox.StandardButton.Yes:
                 return
             self.cur.execute("""UPDATE diary SET days_of_week = ? WHERE name = ?""",
@@ -368,13 +376,12 @@ class OmniTracker(QMainWindow):
             self.cur.execute("""INSERT INTO schedule(name, date, time, crit1, crit2, crit3, crit4, crit5)
                                 VALUES(?, ?, ?, ?, ?, ?, ?, ?)""", (self.name_schedule.text(), date, time,
                                                                     fnum, snum, tnum, frnum, fvnum))
-
             self.con.commit()
-
         except sqlite3.IntegrityError:
-            answer = QMessageBox.question(self, 'Добавление', f'Задача с именем {self.name_schedule.text()} уже существует.'
-                                                     f' Вы хотите переписать её?', QMessageBox.StandardButton.Yes |
-                                QMessageBox.StandardButton.No)
+            answer = QMessageBox.question(self, 'Добавление',
+                                          f'Задача с именем {self.name_schedule.text()} уже существует.'
+                                          f' Вы хотите переписать её?', QMessageBox.StandardButton.Yes |
+                                          QMessageBox.StandardButton.No)
             if answer != QMessageBox.StandardButton.Yes:
                 return
 
@@ -388,7 +395,7 @@ class OmniTracker(QMainWindow):
             crit.clear()
         self.timeEdit.setTime(QTime(0, 0))
 
-    # ------------------------------Работа с задачами----------------------------------------------------
+    # ------------------------------Показать задачи/критерии----------------------------------------------------
 
     def show_tasks(self, tool_type):
         """Показать уже существующие задачи"""
@@ -493,6 +500,11 @@ class OmniTracker(QMainWindow):
     def show_crits(self, tool_type: str):
         """Показывает критерии (для задачника и планировщика) и дни (для ежедневника)"""
         if 't' in tool_type:
+            if not (self.exist_tasks_todo.currentItem() or (self.tasks_todo.currentItem())):
+                for i in self.crits:
+                    i.clear()
+                self.crits_todo.clear()
+                return
             task_name = self.exist_tasks_todo.currentItem().text() if 't' == tool_type \
                 else self.tasks_todo.currentItem().text()  # берём имя задачи
             tasks_crits = self.cur.execute("""SELECT crit1, crit2, crit3, crit4, crit5 FROM todo WHERE name = ?""",
@@ -511,10 +523,12 @@ class OmniTracker(QMainWindow):
                     self.crits_todo.addItem(f'{i[0]}:\n   {num}')
 
         elif 'd' in tool_type:
+            if not (self.exist_tasks_diary.currentItem() or (self.tasks_diary.currentItem())):
+                return
             task_name = self.exist_tasks_diary.currentItem().text() if 'd' == tool_type \
-                else self.tasks_diary.currentItem().text() # берём имя задачи
+                else self.tasks_diary.currentItem().text()  # берём имя задачи
             days_active = ''.join(self.cur.execute("""SELECT days_of_week FROM diary WHERE name = ?""",
-                                           (task_name,)).fetchone())
+                                                   (task_name,)).fetchone())
             if tool_type == 'd':
                 for day in self.days:
                     day.setChecked(False)
@@ -553,11 +567,16 @@ class OmniTracker(QMainWindow):
                     self.days_diary.addItem('Воскресенье')
 
         if 'sch' in tool_type:
+            if not (self.exist_tasks_schedule.currentItem() or (self.tasks_schedule.currentItem())):
+                for i in self.crits:
+                    i.clear()
+                self.crits_schedule.clear()
+                return
             task_name = self.exist_tasks_schedule.currentItem().text().split()[0] if 'sch' == tool_type \
                 else self.tasks_schedule.currentItem().text().split()[0]  # берём только имя задачи (без времени)
             tasks_crits = self.cur.execute("""SELECT crit1, crit2, crit3, crit4, crit5 FROM schedule
                                                 WHERE name = ?""", (task_name,)).fetchone()  # берём значения
-                                                                                                    # всех критериев
+            # всех критериев
             if tool_type == 'sch':
                 self.name_schedule.setText(task_name)
                 for crit, num in zip(self.crits, tasks_crits):
@@ -570,21 +589,22 @@ class OmniTracker(QMainWindow):
                 for i, num in zip(criterions, tasks_crits):
                     self.crits_schedule.addItem(f'{i[0]}:\n   {num}')
 
+    # ---------------------------------------Работа с задачами---------------------------------------
+
     def delete_tasks(self, tool_type):
         """Удалить уже существующие задачи"""
         if 't' in tool_type:
-            item = self.exist_tasks_todo.currentItem().text() if tool_type == 't'\
-                else self.tasks_todo.currentItem().text()
-            if item is None:
+            task_name = self.exist_tasks_todo.currentItem() if tool_type == 't' \
+                else self.tasks_todo.currentItem()
+            if task_name is None:
                 QMessageBox.warning(self, 'Удаление', 'Задача не выбрана!')
                 return
             reply = QMessageBox.question(self, 'Удаление',
-                                         f'Вы точно хотите удалить задачу {item}?',
+                                         f'Вы точно хотите удалить задачу {task_name.text()}?',
                                          QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
             if reply != QMessageBox.StandardButton.Yes:
                 return
-            self.cur.execute("""DELETE FROM todo WHERE name = ?""", (item,))
-
+            self.cur.execute("""DELETE FROM todo WHERE name = ?""", (task_name.text(),))
             self.con.commit()
 
             if tool_type == 't':
@@ -597,21 +617,21 @@ class OmniTracker(QMainWindow):
                 self.show_tasks('t2')
 
         elif 'd' in tool_type:
-            item_diary = self.exist_tasks_diary.currentItem().text() if tool_type == 'd'\
-                else self.tasks_diary.currentItem().text()
-            if item_diary is None:
+            task_name = self.exist_tasks_diary.currentItem() if tool_type == 'd' \
+                else self.tasks_diary.currentItem()
+            if task_name is None:
                 QMessageBox.warning(self, 'Удаление', 'Задача не выбрана!')
                 return
-            reply = QMessageBox.question(self, 'Удаление', f'Вы точно хотите удалить задачу {item_diary}?',
+            reply = QMessageBox.question(self, 'Удаление', f'Вы точно хотите удалить задачу {task_name.text()}?',
                                          QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
             if reply != QMessageBox.StandardButton.Yes:
                 return
 
-            self.cur.execute("""DELETE FROM diary WHERE name = ?""", (item_diary,))
-
+            self.cur.execute("""DELETE FROM diary WHERE name = ?""", (task_name.text(),))
             self.con.commit()
 
             if tool_type == 'd':
+                self.name_diary.clear()
                 for i in self.days:
                     i.setChecked(False)
                 self.show_tasks('d')
@@ -620,33 +640,31 @@ class OmniTracker(QMainWindow):
                 self.show_tasks('d2')
 
         if 'sch' in tool_type:
-            item_schedule = self.exist_tasks_schedule.currentItem() if tool_type == 'sch' else self.tasks_schedule.currentItem()
-            if item_schedule is None:
+            item = self.exist_tasks_schedule.currentItem() if tool_type == 'sch' \
+                else self.tasks_schedule.currentItem()
+            if item is None:
                 QMessageBox.warning(self, 'Удаление', 'Задача не выбрана!')
                 return
-
-            reply = QMessageBox.question(self, 'Удаление', f'Вы точно хотите удалить задачу?',
+            task_name = ''.join(item.text().split('\n')[0])
+            print(task_name)
+            reply = QMessageBox.question(self, 'Удаление', f'Вы точно хотите удалить задачу {task_name}?',
                                          QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
             if reply != QMessageBox.StandardButton.Yes:
                 return
-
-            task_name = ' '.join(item_schedule.text().split('\n')[:-1]).strip()
-
-            header_schedule, reader_schedule = self.schedule_file[0], self.schedule_file[1:]
-            new_rows = [row for row in reader_schedule if row[0] != task_name]
-
-            self.write_file('schedule.csv', header_schedule, new_rows)
+            self.cur.execute("""DELETE FROM schedule WHERE name = ?""", (task_name,))
+            self.con.commit()
 
             if tool_type == 'sch':
-                self.exist_tasks_schedule.takeItem(self.exist_tasks_schedule.row(item_schedule))
-                self.crits_schedule.clear()
+                self.name_todo.clear()
+                for crit in self.crits:
+                    crit.clear()
                 self.show_tasks('sch')
             elif tool_type == 'sch2':
-                self.tasks_schedule.takeItem(self.tasks_schedule.row(item_schedule))
                 self.crits_schedule.clear()
                 self.show_tasks('sch2')
 
-    def redo(self, tool_type, task):  # изменяет задачу, направляя её во вкладку "+"
+    def redo(self, tool_type, task):
+        """изменяет задачу, направляя пользователя во вкладку "+" соответствующего инструмента"""
         if task is None:
             QMessageBox.warning(self, 'Изменение', 'Задача не выбрана!')
             return
@@ -655,200 +673,180 @@ class OmniTracker(QMainWindow):
             self.open('t')
             self.name_todo.setText(task)
 
-            rdr = self.todo_file[1:]
-            for i in rdr:
-                if i[0] == task:
-                    for crit, num in zip(self.crits, i[1:]):
-                        crit.setText(str(num))
-                    break
+            rdr = self.cur.execute("""SELECT name, crit1, crit2, crit3, crit4, crit5 FROM todo
+                                    WHERE name = ?""", (task,)).fetchone()
+            for crit, num in zip(self.crits, rdr[1:]):
+                crit.setText(str(num))
 
         elif 'd' in tool_type:
             self.open('d')
             self.name_diary.setText(task)
 
-            rdr = self.diary_file[1:]
+            rdr = self.cur.execute('''SELECT name, days_of_week FROM diary WHERE name = ?''', (task,)).fetchall()
 
-            for day in self.days:
-                day.setChecked(False)
-
-                for i in rdr:
-                    if i[0] == task:
-                        days = i[2:]
-                        if '1' in days:
-                            self.monday.setChecked(True)
-                        if '2' in days:
-                            self.tuesday.setChecked(True)
-                        if '3' in days:
-                            self.wednesday.setChecked(True)
-                        if '4' in days:
-                            self.thursday.setChecked(True)
-                        if '5' in days:
-                            self.friday.setChecked(True)
-                        if '6' in days:
-                            self.saturday.setChecked(True)
-                        if '7' in days:
-                            self.sunday.setChecked(True)
+            if '1' in rdr[1]:
+                self.monday.setChecked(True)
+            if '2' in rdr[1]:
+                self.tuesday.setChecked(True)
+            if '3' in rdr[1]:
+                self.wednesday.setChecked(True)
+            if '4' in rdr[1]:
+                self.thursday.setChecked(True)
+            if '5' in rdr[1]:
+                self.friday.setChecked(True)
+            if '6' in rdr[1]:
+                self.saturday.setChecked(True)
+            if '7' in rdr[1]:
+                self.sunday.setChecked(True)
 
         elif 'sch' in tool_type:
             self.open('sch')
-            n_task = task.split('\n')[0]
+            n_task = task.split('\n')[0]  # имя задачи
             self.name_schedule.setText(n_task)
-            dt_task = [x for x in self.schedule_file if x[0].strip() == n_task]  # для того, чтобы найти время и дату
-            rdr = self.schedule_file[1:]
-            t_str = dt_task[0][2].strip()
-            d_str = dt_task[0][1].strip()
-            self.calendarWidget.setSelectedDate(QDate.fromString(d_str, 'dd-MM-yyyy'))
-            self.timeEdit.setTime(QTime.fromString(t_str, 'HH:mm'))
-            for i in rdr:
-                if i[0] == n_task:
-                    for crit, num in zip(self.crits, i[3:]):
-                        crit.setText(str(num))
-                    break
+            rdr = self.cur.execute("""SELECT name, date, time, crit1, crit2, crit3, crit4, crit5 FROM schedule
+                                             WHERE name = ?""", (n_task,)).fetchone()
+            self.calendarWidget.setSelectedDate(QDate.fromString(rdr[1], 'dd-MM-yyyy'))
+            self.timeEdit.setTime(QTime.fromString(rdr[2], 'HH:mm'))
+
+            for crit, num in zip(self.crits, rdr[3:]):
+                crit.setText(str(num))
 
     def complete(self, tool_type):
         if tool_type == 't':  # если это задачник
-            item = self.tasks_todo.currentItem()
-            if item is None:
+            task = self.tasks_todo.currentItem()
+            if task is None:
                 QMessageBox.warning(self, 'Выполнение', 'Задача не выбрана!')
                 return
-            header_res, rdr_res = self.read_file('graph1.csv')
-            header_todo, rdr_todo = self.todo_file[0], self.todo_file[1:]
+            todo_points = int(*(self.cur.execute("""SELECT crit1 + crit2 + crit3 + crit4 + crit5 FROM todo
+                                            WHERE name = ?""", (task.text(),)).fetchone()))
+            days = self.cur.execute("SELECT date FROM results").fetchall()
+            in_results = False
+            for i in days:
+                if self.qtoday == ''.join(i):  # проверяем, что сегодняшней даты в таблице нет
+                    self.cur.execute("""UPDATE results SET points = points + ? 
+                                                            WHERE date = ?""", (todo_points, self.qtoday))
+                    in_results = True
+            if in_results is False:
+                self.cur.execute("INSERT INTO results(date, points) VALUES(?, ?)",
+                                 (self.qtoday, todo_points))
+            QMessageBox.information(self, 'Выполнение', f"Задача {task.text()} выполнена! Начислено: {todo_points}")
 
-            task = [x for x in rdr_todo if x and x[0] == item.text()]
-
-            summa = sum(int(n) for n in task[0][1:] if n)
-            QMessageBox.information(self, 'Выполнение', f"Задача {task[0][0]} выполнена! Начислено: {summa}")
-            new_rows = [row for row in rdr_todo if row[0] != item.text()]
-
-            updated_res = []  # обновление graph1
-            today = False
-            for row in rdr_res:
-                if row[0] == QDate.toString(self.todays, 'dd-MM-yyyy'):
-                    updated_res.append([row[0], str(int(row[1]) + summa)])
-                    today = True
-                else:
-                    updated_res.append(row)
-            if not today:
-                updated_res.append([self.qtoday, str(summa)])
-
-            self.write_file('graph1.csv', header_res, updated_res)  # пишем файл для первого графика
-            self.write_file('todo.csv', header_todo, new_rows)  # пишем файл для задачника
+            self.cur.execute("""DELETE FROM todo WHERE name = ?""", (task.text(),))
+            self.con.commit()
 
             self.show_tasks('t2')
             self.show_crits('t2')
-            self.current_graph = self.make_graph(self.general, 0, 90, 487, 348)
+            self.update_graph()
 
         elif tool_type == 'd':  # если это ежедневник
-            item = self.tasks_diary.currentItem()
-            if item is None:
+            task = self.tasks_diary.currentItem()
+            if task is None:
                 QMessageBox.warning(self, 'Выполнение', 'Задача не выбрана!')
                 return
-            header, rdr = self.diary_file[0], self.diary_file[1:]
-
-            updated_row = [x for x in rdr if x and x[0] == item.text()]
-            last_rows = [x for x in rdr if x and x[0] != item.text()]  # предыдущие строки, чтобы они не утерялись
-            updated_row[0][1] = self.qtoday
-            last_rows.append(*updated_row)  # перемещаем выполненную задачу в конец
-            self.write_file('diary.csv', header, last_rows)
-
+            self.cur.execute("UPDATE diary SET date_of_complete = ? WHERE name = ?",
+                             (self.qtoday, task.text()))
+            self.con.commit()
             self.show_tasks('d2')
-            self.show_all_tasks.setChecked(False)
 
         elif tool_type == 'd22':  # если надо отменить выполнение задачи из ежедневника
-            item = self.tasks_diary.currentItem()
-            if item is None:
+            task = self.tasks_diary.currentItem()
+            if task is None:
                 QMessageBox.warning(self, 'Выполнение', 'Задача не выбрана!')
                 return
-
-            header, rdr = self.diary_file[0], self.diary_file[1:]
-            updated_task = [x for x in rdr if x and x[0] == item.text()]  # задача, которую нужно обновить
-            updated_task[0][1] = ''
-            last_rows = [x for x in rdr if x and x[0] != item.text()]  # предыдущие строки, чтобы они не утерялись
-
-            last_rows.append(*updated_task)
-            self.write_file('diary.csv', header, last_rows)
+            self.cur.execute("UPDATE diary SET date_of_complete = '' WHERE name = ?", (task.text(),))
+            self.con.commit()
             self.show_tasks('d2')
-            self.show_all_tasks.setChecked(False)
 
         elif tool_type == 'sch':  # если это планировщик
-            item = self.tasks_schedule.currentItem()
-            if item is None:
+            task = self.tasks_schedule.currentItem()
+            task_name = ''.join(task.text().split('\n')[:-1])
+
+            if task is None:
                 QMessageBox.warning(self, 'Выполнение', 'Задача не выбрана!')
                 return
-            header_res, rdr_res = self.read_file('graph1.csv')
-            header_schedule, rdr_schedule = self.schedule_file[0], self.schedule_file[1:]
-            item_name = ' '.join(item.text().split('\n')[:-1])
-            task = [x for x in rdr_schedule if x and x[0] == item_name]
+            schedule_points = int(*(self.cur.execute("""SELECT crit1 + crit2 + crit3 + crit4 + crit5 FROM schedule
+                                                        WHERE name = ?""", (task_name,)).fetchone()))
+            days = self.cur.execute("SELECT date FROM results").fetchall()
+            in_results = False
+            for i in days:
+                if self.qtoday == ''.join(i):  # проверяем, что сегодняшней даты в таблице нет
+                    self.cur.execute("""UPDATE results SET points = points + ? 
+                                                                        WHERE date = ?""",
+                                     (schedule_points, self.qtoday))
+                    in_results = True
+            if in_results is False:
+                self.cur.execute("INSERT INTO results(date, points) VALUES(?, ?)",
+                                 (self.qtoday, schedule_points))
+            QMessageBox.information(self, 'Выполнение', f"Задача {task_name} выполнена! Начислено: {schedule_points}")
 
-            if self.todays <= QDate.fromString(task[0][1], 'dd-MM-yyyy'):
-                summa = sum(int(n) for n in task[0][3:] if n)
-                QMessageBox.information(self, 'Выполнение', f"Задача {task[0][0]} выполнена! Начислено: {summa}")
-            else:
-                summa = sum(int(n) for n in task[0][3:] if n) // 2
-                QMessageBox.information(self, 'Выполнение', f'У задачи истёк дедлайн, поэтому '
-                                                            f'за её выполнение вы получили в два раза меньше суммы баллов:'
-                                                            f' {summa}')
-
-            new_rows = [row for row in rdr_schedule if row[0] != item_name]
-
-            updated_res = []  # обновление graph1
-            today = False
-            for row in rdr_res:
-                if row[0] == self.qtoday:
-                    updated_res.append([row[0], str(int(row[1]) + summa)])
-                    today = True
-                else:
-                    updated_res.append(row)
-            if not today:
-                updated_res.append([self.qtoday, str(summa)])
-
-            self.write_file('graph1.csv', header_res, updated_res)  # пишем файл для первого графика
-            self.write_file('schedule.csv', header_schedule, new_rows)  # пишем файл для задачника
+            self.cur.execute("""DELETE FROM schedule WHERE name = ?""", (task_name,))
+            self.con.commit()
 
             self.show_tasks('sch2')
-            self.crits_schedule.clear()
-            self.current_graph = self.make_graph(self.general, 0, 90, 487, 348)
+            self.show_crits('sch2')
+            self.update_graph()
 
     # ----------------------------Графики--------------------------------------
 
-    #def load_graph(self):
-        #"""Достаёт данные для графиков"""
-        #rdr = self.read_file('results')
-        #points = []
-        #for row in rdr:
-        #    date = QDate.fromString(row[0], 'dd-MM-yyyy')  # берём дату
-        #    val = int(row[1])  # баллы за дату
-         #   points.append((date, val))
-        #return points
+    def draw_graph(self, figure):
+         """Отрисовка данных"""
+         figure.clear()
+         ax = figure.add_subplot(111)
+         results = self.cur.execute("""SELECT date, points FROM results
+          ORDER BY substr(date, 7, 4) || '-' || substr(date, 4, 2) || '-' || substr(date, 1, 2)""").fetchall()
 
-    #def draw_graph(self, figure):
-       # """Отрисовка данных"""
-        #figure.clear()
-        #ax = figure.add_subplot(111)
-       # points = self.load_graph()
-       # dates = [d.toString('dd-MM') for d, _ in points]  # даты
-       # values = [v for _, v in points]  # баллы
-       # ax.plot(dates, values, marker='o', linewidth=2, color='steelblue')
-       # ax.fill_between(range(len(values)), values, alpha=0.15, color='steelblue')
-       # ax.set_title('Успеваемость по дням', fontsize=10)
-        #ax.set_ylabel('Баллы', fontsize=9)
-       # ax.grid(True, alpha=0.3)
-      #  ax.tick_params(axis='x', rotation=45, labelsize=7)
-        #ax.tick_params(axis='y', labelsize=7)
-        #figure.tight_layout()
+         monday = self.todays.addDays(-(int(self.today_weekday) - 1) + 7 * self.week_offset)
+         sunday = monday.addDays(6)
+         sunday_str = sunday.toString('dd-MM-yyyy')
+         monday_str = monday.toString('dd-MM-yyyy')
 
-    #def make_graph(self, parent, x, y, w, h):
-        #"""Создать график"""
-       # fig = Figure(figsize=(w // 100, h // 100), dpi=100)
-        #canvas = FigureCanvas(fig)
-        #canvas.setParent(parent)
-        #canvas.move(x, y)
-        #canvas.resize(w, h)
-        #canvas.raise_()
-       # self.draw_graph(fig)
-       # canvas.draw()
-        #return canvas
+         filtered = [(date_str, points) for date_str, points in results
+                     if monday <= QDate.fromString(date_str, 'dd-MM-yyyy') <= sunday]
 
+         dates = [r[0] for r in filtered]  # даты
+         values = [r[1] for r in filtered]  # баллы
+         if dates:
+             ax.plot(dates, values, marker='o', linewidth=2, color='steelblue')
+             ax.fill_between(dates, values, alpha=0.15, color='steelblue')
+             ax.set_title(f'Успеваемость за неделю ({monday_str} - {sunday_str})', fontsize=10)
+             ax.set_ylabel('Баллы', fontsize=9)
+             ax.grid(True, alpha=0.3)
+             ax.tick_params(axis='x', rotation=45, labelsize=7)
+             ax.tick_params(axis='y', labelsize=7)
+             figure.tight_layout()
+         else:
+            ax.text(0.5, 0.5, f'Нет данных за неделю ({monday_str} - {sunday_str})',
+                    ha='center', va='center', transform=ax.transAxes, fontsize=10, color='gray')
+
+    def update_graph(self):
+        """Перерисовывает уже существующий график"""
+        if getattr(self, 'current_graph', None) is not None:
+            self.draw_graph(self.current_graph.figure)
+            self.current_graph.draw()
+
+    def make_graph(self, parent, x, y, w, h):
+         """Создать график"""
+         fig = Figure(figsize=(w // 100, h // 100), dpi=100)
+         canvas = FigureCanvas(fig)
+         canvas.setParent(parent)
+         canvas.move(x, y)
+         canvas.resize(w, h)
+         canvas.raise_()
+         self.draw_graph(fig)
+         canvas.draw()
+         return canvas
+
+    def get_week_bounds(self):
+        """Возвращает определённую неделю"""
+
+
+    def prev_week(self):
+        self.week_offset -= 1
+        self.update_graph()
+
+    def next_week(self):
+        self.week_offset += 1
+        self.update_graph()
 
 if __name__ == '__main__':
     app = QApplication(argv)
