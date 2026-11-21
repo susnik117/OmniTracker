@@ -167,6 +167,32 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <string>Планировщик</string>
      </property>
     </widget>
+    <widget class="QPushButton" name="prev_week_btn">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>450</y>
+       <width>75</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>PushButton</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="next_week_btn">
+     <property name="geometry">
+      <rect>
+       <x>210</x>
+       <y>450</y>
+       <width>75</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>PushButton</string>
+     </property>
+    </widget>
     <zorder>listView_2</zorder>
     <zorder>phylosophy_browser</zorder>
     <zorder>plus_btn</zorder>
@@ -176,6 +202,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <zorder>todo_plus</zorder>
     <zorder>diary_plus</zorder>
     <zorder>schedule_plus</zorder>
+    <zorder>prev_week_btn</zorder>
+    <zorder>next_week_btn</zorder>
    </widget>
    <widget class="QGroupBox" name="todo">
     <property name="geometry">
@@ -1343,22 +1371,46 @@ li.checked::marker { content: &quot;\2612&quot;; }
 }</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_16">
+    <widget class="QWidget" name="verticalLayoutWidget">
      <property name="geometry">
       <rect>
-       <x>0</x>
-       <y>310</y>
-       <width>781</width>
-       <height>181</height>
+       <x>30</x>
+       <y>80</y>
+       <width>171</width>
+       <height>511</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QCheckBox" name="is_crits_on">
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Включить критерии</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QPushButton" name="confirm_changes">
+     <property name="geometry">
+      <rect>
+       <x>580</x>
+       <y>520</y>
+       <width>181</width>
+       <height>71</height>
       </rect>
      </property>
      <property name="font">
       <font>
-       <pointsize>36</pointsize>
+       <pointsize>11</pointsize>
       </font>
      </property>
      <property name="text">
-      <string>(Возможно, здесь будут настройки)</string>
+      <string>Подтвердить изменения</string>
      </property>
     </widget>
    </widget>
