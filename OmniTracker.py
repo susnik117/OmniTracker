@@ -573,17 +573,17 @@ class OmniTracker(QMainWindow):
     def delete_tasks(self, tool_type):
         """Удалить уже существующие задачи"""
         if 't' in tool_type:
-            task_name = self.exist_tasks_todo.currentItem().text() if tool_type == 't'\
-                else self.tasks_todo.currentItem().text()
+            task_name = self.exist_tasks_todo.currentItem() if tool_type == 't'\
+                else self.tasks_todo.currentItem()
             if task_name is None:
                 QMessageBox.warning(self, 'Удаление', 'Задача не выбрана!')
                 return
             reply = QMessageBox.question(self, 'Удаление',
-                                         f'Вы точно хотите удалить задачу {task_name}?',
+                                         f'Вы точно хотите удалить задачу {task_name.text()}?',
                                          QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
             if reply != QMessageBox.StandardButton.Yes:
                 return
-            self.cur.execute("""DELETE FROM todo WHERE name = ?""", (task_name,))
+            self.cur.execute("""DELETE FROM todo WHERE name = ?""", (task_name.text(),))
             self.con.commit()
 
             if tool_type == 't':
@@ -596,17 +596,17 @@ class OmniTracker(QMainWindow):
                 self.show_tasks('t2')
 
         elif 'd' in tool_type:
-            task_name = self.exist_tasks_diary.currentItem().text() if tool_type == 'd'\
-                else self.tasks_diary.currentItem().text()
+            task_name = self.exist_tasks_diary.currentItem() if tool_type == 'd'\
+                else self.tasks_diary.currentItem()
             if task_name is None:
                 QMessageBox.warning(self, 'Удаление', 'Задача не выбрана!')
                 return
-            reply = QMessageBox.question(self, 'Удаление', f'Вы точно хотите удалить задачу {task_name}?',
+            reply = QMessageBox.question(self, 'Удаление', f'Вы точно хотите удалить задачу {task_name.text()}?',
                                          QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
             if reply != QMessageBox.StandardButton.Yes:
                 return
 
-            self.cur.execute("""DELETE FROM diary WHERE name = ?""", (task_name,))
+            self.cur.execute("""DELETE FROM diary WHERE name = ?""", (task_name.text(),))
             self.con.commit()
 
             if tool_type == 'd':
@@ -618,24 +618,26 @@ class OmniTracker(QMainWindow):
                 self.show_tasks('d2')
 
         if 'sch' in tool_type:
-            item_schedule = self.exist_tasks_schedule.currentItem().text() if tool_type == 'sch'\
-                else self.tasks_schedule.currentItem().text()
+            item_schedule = self.exist_tasks_schedule.currentItem() if tool_type == 'sch'\
+                else self.tasks_schedule.currentItem()
             if item_schedule is None:
                 QMessageBox.warning(self, 'Удаление', 'Задача не выбрана!')
                 return
 
             task_name = ' '.join(item_schedule.split('\n')[:-1]).strip()
 
-            reply = QMessageBox.question(self, 'Удаление', f'Вы точно хотите удалить задачу {task_name}?',
+            reply = QMessageBox.question(self, 'Удаление', f'Вы точно хотите удалить задачу {task_name.text()}?',
                                          QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
             if reply != QMessageBox.StandardButton.Yes:
                 return
 
-            self.cur.execute("""DELETE FROM diary WHERE name = ?""", (task_name,))
+            self.cur.execute("""DELETE FROM diary WHERE name = ?""", (task_name.text(),))
             self.con.commit()
 
             if tool_type == 'sch':
-                self.crits_schedule.clear()
+                self.name_todo.clear()
+                for crit in self.crits:
+                    crit.clear()
                 self.show_tasks('sch')
             elif tool_type == 'sch2':
                 self.crits_schedule.clear()
