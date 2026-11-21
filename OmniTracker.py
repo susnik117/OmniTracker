@@ -1,13 +1,12 @@
 from sys import argv, exit
 from io import StringIO
-from PyQt6.QtWidgets import QMainWindow, QListWidgetItem, QApplication, QMenuBar, QLineEdit, QMessageBox
+from PyQt6.QtWidgets import QMainWindow, QListWidgetItem, QApplication, QLineEdit, QMessageBox
 from PyQt6.QtGui import QColor, QBrush
-from PyQt6.QtCore import QTime, QDate
+from PyQt6.QtCore import QTime, QDate, Qt
 from PyQt6 import uic
 import sqlite3
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
-import matplotlib.dates as mdates
 
 
 # TODO: добавить отображения состояния (при добавлении задачи/выполнении/изменений настроек) в статус-бар
@@ -25,6 +24,9 @@ import matplotlib.dates as mdates
 # TODO: добавить горячие клавиши (Ctrl + Z, Ctrl + C, Ctrl + V, Ctrl + x)
 
 # TODO: пофиксить баг: если все критерии равны нулю, то программа в complete упадёт
+
+# TODO: сделать так, чтобы если в планировщике в каком-либо дне есть задачи, то этот день будет окрашиваться в
+#  выбранный пользователем цвет
 
 class OmniTracker(QMainWindow):
     """Класс, выполняющий функционал приложения"""
@@ -52,7 +54,7 @@ class OmniTracker(QMainWindow):
         self.schedule_plus.hide()
 
         self.windows = [self.general, self.todo, self.todo_2, self.diary, self.diary_2, self.schedule, self.schedule_2,
-                        self.results, self.settings]
+                        self.settings]
         # все окна в один лист, чтобы можно было легко их открывать/перемещать
 
         self.days = [self.monday, self.tuesday, self.wednesday, self.thursday, self.friday, self.saturday, self.sunday]
@@ -77,25 +79,12 @@ class OmniTracker(QMainWindow):
             crit.hide()
             y_move += 53
 
-        # -------------Создание меню и действий---------------
-        self.menu_bar = QMenuBar(self)
-        self.menu = self.menu_bar.addMenu('Открыть')
-
-        self.general_menu = self.menu.addAction('Главная панель')
-        self.todo_act = self.menu.addAction('Задачник')
-        self.diary_act = self.menu.addAction('Ежедневник')
-        self.schedule_act = self.menu.addAction('Планировщик')
-        self.results_act = self.menu.addAction('Результаты')
-        self.settings_act = self.menu.addAction('Настройки')
-
-        # --------------Привязка действий------------------------
-
-        self.general_menu.triggered.connect(lambda: self.open('g'))
-        self.todo_act.triggered.connect(lambda: self.open('t2'))
-        self.diary_act.triggered.connect(lambda: self.open('d2'))
-        self.schedule_act.triggered.connect(lambda: self.open('sch2'))
-        self.results_act.triggered.connect(lambda: self.open('r'))
-        self.settings_act.triggered.connect(lambda: self.open('se'))
+        # -------------Привязка меню---------------
+        self.menu.aboutToShow.connect(lambda: self.menu_clicked('g'))
+        self.menu_2.aboutToShow.connect(lambda: self.menu_clicked('t2'))
+        self.menu_3.aboutToShow.connect(lambda: self.menu_clicked('d2'))
+        self.menu_4.aboutToShow.connect(lambda: self.menu_clicked('sch2'))
+        self.menu_5.aboutToShow.connect(lambda: self.menu_clicked('se'))
 
         # --------------Привязка кнопок---------------------
         self.diarybtn_todo.clicked.connect(lambda: self.open('d'))  # для перемещения между инструментами в вкладках "+"
@@ -246,15 +235,20 @@ class OmniTracker(QMainWindow):
             case 'sch2':
                 self.schedule_2.show()
                 self.show_tasks('sch2')
-            case 'r':
-                self.results.show()
             case 'se':
                 self.settings.show()
             case 'p':
-                self.general.show()
-                self.todo_plus.show()
-                self.diary_plus.show()
-                self.schedule_plus.show()
+                self.open('g')
+                if not self.is_plus_ready:
+                    self.todo_plus.show()
+                    self.diary_plus.show()
+                    self.schedule_plus.show()
+                    self.is_plus_ready = True
+                else:
+                    self.todo_plus.hide()
+                    self.diary_plus.hide()
+                    self.schedule_plus.hide()
+                    self.is_plus_ready = False
 
     # -----------------------------Функции для добавления задач----------------------
 
@@ -433,7 +427,7 @@ class OmniTracker(QMainWindow):
                 self.tasks_diary.clear()
                 for task in rdr_diary:
                     if (task[1] == self.todays.toString('dd-MM-yyyy')  # проверяем, что эта задача на сегодня и она
-                            and str(QDate.currentDate().dayOfWeek()) in task[2:]):  # выполнена
+                            and str(QDate.currentDate().dayOfWeek()) in task[2]):  # выполнена
                         item = QListWidgetItem(task[0])
                         item.setForeground(QBrush(QColor("gray")))
                         font = item.font()
@@ -441,7 +435,7 @@ class OmniTracker(QMainWindow):
                         item.setFont(font)
 
                         self.tasks_diary.addItem(item)
-                    elif self.today_weekday in task[2:]:
+                    elif str(QDate.currentDate().dayOfWeek()) in task[2]:
 
                         self.tasks_diary.addItem(task[0])
 
@@ -449,7 +443,10 @@ class OmniTracker(QMainWindow):
                 self.tasks_diary.clear()
                 if self.show_all_tasks.isChecked():
                     for task in rdr_diary:
-                        if task[1] == self.todays or self.today_weekday not in task[2:]:
+                        print(task[1])
+                        print(task[2])
+                        print(self.todays)
+                        if task[1] == self.qtoday or self.today_weekday not in task[2]:
                             item = QListWidgetItem(task[0])
                             item.setForeground(QBrush(QColor("gray")))
 
@@ -463,18 +460,7 @@ class OmniTracker(QMainWindow):
 
                 else:
                     self.tasks_diary.clear()
-                    for task in rdr_diary:
-                        if task[1] == self.todays and self.today_weekday in task[2:]:
-                            item = QListWidgetItem(task[0])
-                            item.setForeground(QBrush(QColor("gray")))
-
-                            font = item.font()
-                            font.setPointSize(7)  # размер шрифта
-                            item.setFont(font)
-
-                            self.tasks_diary.addItem(item)
-                        elif self.today_weekday in task[2:]:
-                            self.tasks_diary.addItem(task[0])
+                    self.show_tasks('d2')
 
         elif 'sch' in tool_type:  # если это планировщик
             rdr_schedule = self.cur.execute('''SELECT name, time, date FROM schedule''').fetchall()
@@ -483,7 +469,8 @@ class OmniTracker(QMainWindow):
                 if self.cb_schedule.isChecked():
                     self.exist_tasks_schedule.clear()
                     for task in rdr_schedule:
-                        self.exist_tasks_schedule.addItem(task[0])
+                        self.exist_tasks_schedule.addItem(task[0] + '\n' + task[1])
+
                 else:
                     for crit in self.crits:
                         crit.setText('')
@@ -572,13 +559,17 @@ class OmniTracker(QMainWindow):
                     i.clear()
                 self.crits_schedule.clear()
                 return
-            task_name = self.exist_tasks_schedule.currentItem().text().split()[0] if 'sch' == tool_type \
-                else self.tasks_schedule.currentItem().text().split()[0]  # берём только имя задачи (без времени)
+            # берём только имя задачи
+            task =  ''.join(self.exist_tasks_schedule.currentItem().text().split('\n')) if 'sch' == tool_type \
+                else ''.join(self.tasks_schedule.currentItem().text().split('\n'))
+
+            time = self.cur.execute("""SELECT time FROM schedule WHERE name = ?""", (task,)).fetchone()
             tasks_crits = self.cur.execute("""SELECT crit1, crit2, crit3, crit4, crit5 FROM schedule
-                                                WHERE name = ?""", (task_name,)).fetchone()  # берём значения
+                                                WHERE name = ?""", (task,)).fetchone()  # берём значения
             # всех критериев
             if tool_type == 'sch':
-                self.name_schedule.setText(task_name)
+                self.name_schedule.setText(task)
+                self.timeEdit.setTime(QTime.fromString(time[0], 'HH:mm'))
                 for crit, num in zip(self.crits, tasks_crits):
                     crit.setText(str(num))
 
@@ -746,6 +737,7 @@ class OmniTracker(QMainWindow):
             self.cur.execute("UPDATE diary SET date_of_complete = ? WHERE name = ?",
                              (self.qtoday, task.text()))
             self.con.commit()
+            self.show_all_tasks.setChecked(False)
             self.show_tasks('d2')
 
         elif tool_type == 'd22':  # если надо отменить выполнение задачи из ежедневника
@@ -755,6 +747,7 @@ class OmniTracker(QMainWindow):
                 return
             self.cur.execute("UPDATE diary SET date_of_complete = '' WHERE name = ?", (task.text(),))
             self.con.commit()
+            self.show_all_tasks.setChecked(False)
             self.show_tasks('d2')
 
         elif tool_type == 'sch':  # если это планировщик
@@ -808,14 +801,16 @@ class OmniTracker(QMainWindow):
          if dates:
              ax.plot(dates, values, marker='o', linewidth=2, color='steelblue')
              ax.fill_between(dates, values, alpha=0.15, color='steelblue')
-             ax.set_title(f'Успеваемость за неделю ({monday_str} - {sunday_str})', fontsize=10)
+             ax.set_title(f'Успеваемость за неделю', fontsize=10)
              ax.set_ylabel('Баллы', fontsize=9)
+             self.week_label.setText(f'{monday_str} - {sunday_str}')
              ax.grid(True, alpha=0.3)
              ax.tick_params(axis='x', rotation=45, labelsize=7)
              ax.tick_params(axis='y', labelsize=7)
              figure.tight_layout()
          else:
-            ax.text(0.5, 0.5, f'Нет данных за неделю ({monday_str} - {sunday_str})',
+             self.week_label.setText(f'{monday_str} - {sunday_str}')
+             ax.text(0.5, 0.5, f'Нет данных за неделю',
                     ha='center', va='center', transform=ax.transAxes, fontsize=10, color='gray')
 
     def update_graph(self):
@@ -836,10 +831,6 @@ class OmniTracker(QMainWindow):
          canvas.draw()
          return canvas
 
-    def get_week_bounds(self):
-        """Возвращает определённую неделю"""
-
-
     def prev_week(self):
         self.week_offset -= 1
         self.update_graph()
@@ -847,6 +838,10 @@ class OmniTracker(QMainWindow):
     def next_week(self):
         self.week_offset += 1
         self.update_graph()
+
+    def menu_clicked(self, window_key):
+        if QApplication.mouseButtons() & Qt.MouseButton.LeftButton:
+            self.open(window_key)
 
 if __name__ == '__main__':
     app = QApplication(argv)
