@@ -152,7 +152,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <widget class="QPushButton" name="schedule_plus">
      <property name="geometry">
       <rect>
-       <x>434</x>
+       <x>433</x>
        <y>510</y>
        <width>91</width>
        <height>61</height>
@@ -1252,7 +1252,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="lineEdit"/>
+         <widget class="QLineEdit" name="min_crit"/>
         </item>
        </layout>
       </item>
@@ -1271,7 +1271,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="lineEdit_2"/>
+         <widget class="QLineEdit" name="max_crit"/>
         </item>
        </layout>
       </item>
@@ -1288,7 +1288,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="checkBox">
+       <widget class="QCheckBox" name="is_quotes_on">
         <property name="font">
          <font>
           <pointsize>11</pointsize>
@@ -1311,9 +1311,21 @@ li.checked::marker { content: &quot;\2612&quot;; }
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QCheckBox" name="is_graph_on">
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Включить график</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
-    <widget class="QPushButton" name="confirm_changes">
+    <widget class="QPushButton" name="confirm_settings">
      <property name="geometry">
       <rect>
        <x>580</x>
@@ -1329,6 +1341,24 @@ li.checked::marker { content: &quot;\2612&quot;; }
      </property>
      <property name="text">
       <string>Подтвердить изменения</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_10">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>592</y>
+       <width>531</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>11</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Чтобы изменения вступили в силу, необходимо перезапустить OmniTracker</string>
      </property>
     </widget>
    </widget>
