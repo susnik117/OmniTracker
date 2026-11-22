@@ -2119,15 +2119,37 @@ li.checked::marker { content: &quot;\2612&quot;; }
       </item>
       <item>
        <widget class="QPushButton" name="add_crit_btn">
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
         <property name="text">
-         <string>Добавить критерий</string>
+         <string>Добавить/переписать критерий</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QPushButton" name="del_crit_btn">
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>Удалить выбранный критерий</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="clear_crits">
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Очистить поля ввода</string>
         </property>
        </widget>
       </item>

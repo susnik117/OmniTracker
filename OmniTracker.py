@@ -146,7 +146,9 @@ class OmniTracker(QMainWindow):
 
         self.confirm_settings.clicked.connect(self.update_settings)  # настройки
         self.redact_crits_btn.clicked.connect(lambda: self.open('se2'))
-        self.add_crit_btn.clicked.connect(self.add_crit)
+        self.add_crit_btn.clicked.connect(self.add_or_redo_crit)
+        self.clear_crits.clicked.connect(lambda: self.fill_or_defill_lineedits_settings(''))
+        self.del_crit_btn.clicked.connect(self.del_crit)
 
         self.exist_tasks_todo.itemClicked.connect(lambda: self.show_crits('t'))  # для регистрации нажатий по листам
         self.tasks_todo.itemClicked.connect(lambda: self.show_crits('t2'))
@@ -154,7 +156,7 @@ class OmniTracker(QMainWindow):
         self.tasks_diary.itemClicked.connect(lambda: self.show_crits('d2'))
         self.exist_tasks_schedule.itemClicked.connect(lambda: self.show_crits('sch'))
         self.tasks_schedule.itemClicked.connect(lambda: self.show_crits('sch2'))
-        self.criterions_redact.itemClicked.connect(self.fill_lineedits_settings)
+        self.criterions_redact.itemClicked.connect(lambda: self.fill_or_defill_lineedits_settings('fill'))
         # --------------------------Графики---------------------------------------
 
         if self.current_settings[4]:  # проверка на то, что графики включены
@@ -222,7 +224,7 @@ class OmniTracker(QMainWindow):
                     self.phylosophy_browser.show()
             case 't':
                 self.todo.show()
-                crits_db = self.cur.execute('SELECT name FROM criterions')
+                crits_db = self.cur.execute('SELECT name FROM criterions ORDER BY id')
 
                 self.tasks_criterions_todo.clear()
                 for i, crit in zip(crits_db, self.crits):
@@ -240,7 +242,7 @@ class OmniTracker(QMainWindow):
                 self.show_tasks('d2')
             case 'sch':
                 self.schedule.show()
-                crits_db = self.cur.execute('SELECT name FROM criterions')
+                crits_db = self.cur.execute('SELECT name FROM criterions ORDER BY id')
                 self.tasks_criterions_schedule.clear()
                 for line, crit in zip(crits_db, self.crits):
                     self.tasks_criterions_schedule.addItem(line[0])
@@ -263,7 +265,7 @@ class OmniTracker(QMainWindow):
                 self.criterions_redact.clear()
                 crits = self.cur.execute("""SELECT * FROM criterions""").fetchall()
                 for c in crits:
-                    self.criterions_redact.addItem(c[0])
+                    self.criterions_redact.addItem(f'{c[1]} ({c[2]} - {c[3]})')
             case 'p':
                 self.open('g')
                 if not self.is_plus_ready:
@@ -584,8 +586,8 @@ class OmniTracker(QMainWindow):
                     return
                 task_name = self.exist_tasks_todo.currentItem().text() if 't' == tool_type \
                     else self.tasks_todo.currentItem().text()  # берём имя задачи
-                tasks_crits = self.cur.execute("""SELECT crit1, crit2, crit3, crit4, crit5 FROM todo WHERE name = ?""",
-                                               (task_name,)).fetchone()
+                tasks_crits = self.cur.execute(
+        """SELECT crit1, crit2, crit3, crit4, crit5 FROM todo WHERE name = ?""",(task_name,)).fetchone()
                 if tool_type == 't':
                     name = self.cur.execute("""SELECT name FROM todo WHERE name = ?""",
                                             (task_name,)).fetchone()
@@ -594,7 +596,7 @@ class OmniTracker(QMainWindow):
                         crit.setText(str(num))
 
                 if tool_type == 't2':
-                    criterions = self.cur.execute("SELECT name FROM criterions").fetchall()
+                    criterions = self.cur.execute("SELECT name FROM criterions ORDER BY id").fetchall()
                     self.crits_todo.clear()
                     for i, num in zip(criterions, tasks_crits):
                         self.crits_todo.addItem(f'{i[0]}:\n   {num}')
@@ -606,22 +608,24 @@ class OmniTracker(QMainWindow):
                     self.crits_schedule.clear()
                     return
                 # берём только имя задачи
-                task =  ''.join(self.exist_tasks_schedule.currentItem().text().split('\n')) if 'sch' == tool_type \
-                    else ''.join(self.tasks_schedule.currentItem().text().split('\n'))
+                task =  ''.join(self.exist_tasks_schedule.currentItem().text().split('\n')[0]) if 'sch' == tool_type \
+                    else ''.join(self.tasks_schedule.currentItem().text().split('\n')[0])
 
-                time = self.cur.execute("""SELECT time FROM schedule WHERE name = ?""", (task,)).fetchone()
+                date_time = self.cur.execute("""SELECT date, time FROM schedule WHERE name = ?""",
+                                             (task,)).fetchone()
                 tasks_crits = self.cur.execute("""SELECT crit1, crit2, crit3, crit4, crit5 FROM schedule
                                                     WHERE name = ?""", (task,)).fetchone()  # берём значения
                 # всех критериев
                 if tool_type == 'sch':
-                    self.name_schedule.setText(task)
-                    self.timeEdit.setTime(QTime.fromString(time[0], 'HH:mm'))
+                    # ставим день выбранной задачи
+                    self.calendarWidget.setSelectedDate(QDate.fromString(date_time[0], 'dd-MM-yyyy'))
+                    self.name_schedule.setText(task)  # имя
+                    self.timeEdit.setTime(QTime.fromString(date_time[1], 'HH:mm'))  # и время
                     for crit, num in zip(self.crits, tasks_crits):
                         crit.setText(str(num))
 
                 if tool_type == 'sch2':
-                    criterions = self.cur.execute("SELECT name FROM criterions").fetchall()
-
+                    criterions = self.cur.execute("SELECT name FROM criterions ORDER BY id").fetchall()
                     self.crits_schedule.clear()
                     for i, num in zip(criterions, tasks_crits):
                         self.crits_schedule.addItem(f'{i[0]}:\n   {num}')
@@ -911,8 +915,12 @@ class OmniTracker(QMainWindow):
         self.current_settings = self.cur.execute('SELECT * FROM settings').fetchone()
         self.open('se')
 
-    def add_crit(self):
-        """Функция для добавления критерия"""
+    def add_or_redo_crit(self):
+        """Функция для добавления/изменения критериев"""
+        number_of_existing_criterions = int(self.cur.execute('SELECT COUNT(*) FROM criterions').fetchall()[0][0]) + 1
+        if number_of_existing_criterions > 5:
+            QMessageBox.warning(self, 'Добавление', 'Критериев не может быть больше 5! Критерий не был добавлен')
+            return
         try:
             if not self.max_crit.text() or not self.min_crit.text():
                 QMessageBox.warning(self, 'Настройки', 'Заполните минимальное/максимальное значение критерия!')
@@ -938,20 +946,32 @@ class OmniTracker(QMainWindow):
                     max_crit -= 1
                 QMessageBox.information(self, 'Настройка',
                                         f'Вы выбрали ненулевое значение минимального значения критерия. '
-                        f'Для правильного подсчёта результатов минимальное значение теперь будет равно {min_crit}, '
+                        f'Для правильного подсчёта результатов минимальное значение теперь будет равно {min_crit + 1}, '
                                         f'а максимальное значение будет равно {max_crit}')
-                self.cur.execute('INSERT INTO settings(name, crit_min, crit_max)'
+            if not self.criterions_redact.currentItem():  # если не выбран критерий для изменения
+                self.cur.execute('INSERT INTO criterions(name, min, max)'
                                  ' VALUES(?, ?, ?)' , (name_crit, min_crit, max_crit,))
+            else:
+                answer = QMessageBox.question(self, 'Изменение',
+                                              f'Вы точно хотите переписать критерий {name_crit}?',
+                                              QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+                if answer != QMessageBox.StandardButton.Yes:
+                    return
+                self.cur.execute('UPDATE criterions SET min = ?, max = ? WHERE name = ?',
+                                 (min_crit, max_crit, name_crit))
+
         except ValueError:
             QMessageBox.warning(self, 'Добавление', "Заполните минимальное/максимальное значения"
                                                     " критериев натуральными цифрами!")
             return
         except sqlite3.IntegrityError:
-            QMessageBox.warning(self, 'Добавление', f'Критерий с именем {name_crit}')
-        number_of_existing_criterions = int(self.cur.execute('SELECT COUNT(*) FROM criterions').fetchall()[0][0])
-        if number_of_existing_criterions > 5:
-            QMessageBox.warning(self, 'Добавление', 'Критериев не может быть больше 5! Критерий не был добавлен')
-            return
+            answer = QMessageBox.question(self, 'Добавление',
+                                        f'Критерий с именем {name_crit} уже существует. Вы хотите его переписать?',
+                                        QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+            if answer != QMessageBox.StandardButton.Yes:
+                return
+            self.cur.execute('UPDATE criterions SET min = ?, max = ? WHERE name = ?',
+                             (min_crit, max_crit, name_crit))
 
         self.name_crit.clear()
         self.min_crit.clear()
@@ -965,21 +985,31 @@ class OmniTracker(QMainWindow):
         if not crit:
             QMessageBox.warning(self, 'Удаление', 'Выберите критерий!')
             return
-        name = crit.text()
+        name = crit.text().split()[0]
         answer = QMessageBox.question(self, 'Удаление', f'Вы действительно хотите удалить критерий {name}?',
                                       QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
-        if answer != QMessageBox.StandardButton.No:
+        if answer != QMessageBox.StandardButton.Yes:
             return
         self.cur.execute('DELETE FROM criterions WHERE name = ?', (name,))
-        self.con.commit()
 
-    def fill_lineedits_settings(self):
-        """Заполняет QLineEdit в настройках"""
-        name = self.criterions_redact.currentItem().text()
-        crit = self.cur.execute("SELECT * FROM criterions WHERE name = ?", (name,)).fetchone()
-        self.name_crit.setText(crit[0])
-        self.min_crit.setText(str(crit[1]))
-        self.max_crit.setText(str(crit[2]))
+        self.name_crit.clear()
+        self.min_crit.clear()
+        self.max_crit.clear()
+        self.open('se2')
+        self.con.commit()
+    def fill_or_defill_lineedits_settings(self, fill):
+        """Заполняет или очищает QLineEdit в настройках"""
+        if fill:
+            name = ' '.join(self.criterions_redact.currentItem().text().split()[:-3])
+            crit = self.cur.execute("SELECT * FROM criterions WHERE name = ?", (name,)).fetchone()
+            self.name_crit.setText(crit[1])
+            self.min_crit.setText(str(crit[2]))
+            self.max_crit.setText(str(crit[3]))
+        if not fill:
+            self.criterions_redact.setCurrentItem(None)
+            self.name_crit.setText('')
+            self.min_crit.setText('')
+            self.max_crit.setText('')
 
 if __name__ == '__main__':
     app = QApplication(argv)
