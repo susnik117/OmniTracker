@@ -1238,45 +1238,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QLabel" name="label_8">
-          <property name="font">
-           <font>
-            <pointsize>11</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Минимальное значение критерия: </string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="min_crit"/>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QLabel" name="label_9">
-          <property name="font">
-           <font>
-            <pointsize>11</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Максимальное значение критерия: </string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="max_crit"/>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButton_4">
+       <widget class="QPushButton" name="redact_crits_btn">
         <property name="font">
          <font>
           <pointsize>11</pointsize>
@@ -1300,7 +1262,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_2">
+       <widget class="QPushButton" name="redact_quotes_btn">
         <property name="font">
          <font>
           <pointsize>11</pointsize>
@@ -1966,6 +1928,210 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <property name="text">
       <string>Окно &quot;+&quot;</string>
      </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="settings_crits">
+    <property name="geometry">
+     <rect>
+      <x>830</x>
+      <y>2700</y>
+      <width>791</width>
+      <height>621</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string/>
+    </property>
+    <widget class="QLabel" name="label_16">
+     <property name="geometry">
+      <rect>
+       <x>240</x>
+       <y>0</y>
+       <width>391</width>
+       <height>71</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>48</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>КРИТЕРИИ</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_17">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>180</y>
+       <width>161</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>20</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Название:</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="addtbn_todo_4">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>520</y>
+       <width>191</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>20</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>ДОБАВИТЬ</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="checkBox_6">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>450</y>
+       <width>291</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Выбрать уже существующую задачу</string>
+     </property>
+    </widget>
+    <widget class="QWidget" name="gridLayoutWidget_5">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>230</y>
+       <width>281</width>
+       <height>201</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_6"/>
+    </widget>
+    <widget class="QListView" name="listView_12">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>70</y>
+       <width>791</width>
+       <height>551</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QListView {
+    background-color: #666;
+}</string>
+     </property>
+    </widget>
+    <widget class="QListWidget" name="criterions_redact">
+     <property name="geometry">
+      <rect>
+       <x>15</x>
+       <y>80</y>
+       <width>171</width>
+       <height>531</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QWidget" name="verticalLayoutWidget_2">
+     <property name="geometry">
+      <rect>
+       <x>200</x>
+       <y>80</y>
+       <width>258</width>
+       <height>531</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QLabel" name="label_11">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Имя критерия:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="name_crit"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="QLabel" name="label_12">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Минимальное значение:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="min_crit"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <item>
+         <widget class="QLabel" name="label_13">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Максимальное значение:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="max_crit"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QPushButton" name="add_crit_btn">
+        <property name="text">
+         <string>Добавить критерий</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="del_crit_btn">
+        <property name="text">
+         <string>Удалить выбранный критерий</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </widget>
   </widget>

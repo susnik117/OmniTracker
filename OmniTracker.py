@@ -55,7 +55,7 @@ class OmniTracker(QMainWindow):
         self.schedule_plus.hide()
 
         self.windows = [self.general, self.todo, self.todo_2, self.diary, self.diary_2, self.schedule, self.schedule_2,
-                        self.settings]
+                        self.settings, self.settings_crits]
         # все окна в один лист, чтобы можно было легко их открывать/перемещать
 
         self.days = [self.monday, self.tuesday, self.wednesday, self.thursday, self.friday, self.saturday, self.sunday]
@@ -144,7 +144,9 @@ class OmniTracker(QMainWindow):
             if self.tasks_schedule.currentItem() is not None
             else QMessageBox.warning(self, 'Изменение', 'Задача не выбрана!'))
 
-        self.confirm_settings.clicked.connect(self.update_settings)
+        self.confirm_settings.clicked.connect(self.update_settings)  # настройки
+        self.redact_crits_btn.clicked.connect(lambda: self.open('se2'))
+        self.add_crit_btn.clicked.connect(self.add_crit)
 
         self.exist_tasks_todo.itemClicked.connect(lambda: self.show_crits('t'))  # для регистрации нажатий по листам
         self.tasks_todo.itemClicked.connect(lambda: self.show_crits('t2'))
@@ -152,6 +154,7 @@ class OmniTracker(QMainWindow):
         self.tasks_diary.itemClicked.connect(lambda: self.show_crits('d2'))
         self.exist_tasks_schedule.itemClicked.connect(lambda: self.show_crits('sch'))
         self.tasks_schedule.itemClicked.connect(lambda: self.show_crits('sch2'))
+        self.criterions_redact.itemClicked.connect(self.fill_lineedits_settings)
         # --------------------------Графики---------------------------------------
 
         if self.current_settings[4]:  # проверка на то, что графики включены
@@ -249,8 +252,18 @@ class OmniTracker(QMainWindow):
             case 'se':
                 self.settings.show()
                 self.is_crits_on.setChecked(True) if self.current_settings[2] else self.is_crits_on.setChecked(False)
+                self.redact_crits_btn.hide() if not self.is_crits_on.isChecked() else self.redact_crits_btn.show()
+
                 self.is_quotes_on.setChecked(True) if self.current_settings[3] else self.is_quotes_on.setChecked(False)
+                self.redact_quotes_btn.hide() if not self.is_quotes_on.isChecked() else self.redact_quotes_btn.show()
+
                 self.is_graph_on.setChecked(True) if self.current_settings[4] else self.is_graph_on.setChecked(False)
+            case 'se2':  # редактирование критерий
+                self.settings_crits.show()
+                self.criterions_redact.clear()
+                crits = self.cur.execute("""SELECT * FROM criterions""").fetchall()
+                for c in crits:
+                    self.criterions_redact.addItem(c[0])
             case 'p':
                 self.open('g')
                 if not self.is_plus_ready:
@@ -887,38 +900,8 @@ class OmniTracker(QMainWindow):
 
     # -------------------------------------------Настройки-----------------------------
     def update_settings(self):
-        min_crit, max_crit, is_crits_on, is_quotes_on, is_graph_on = (self.min_crit, self.max_crit,
-                                                            self.is_crits_on.isChecked(), self.is_quotes_on.isChecked(),
-                                                              self.is_graph_on.isChecked())
-
-        if is_crits_on and ((min_crit and not max_crit) or (not min_crit and max_crit)):
-            QMessageBox.warning(self, 'Настройки', 'Заполните минимальное/максимальное значение критерия!')
-            return
-        try:
-            min_crit = int(min_crit.text())
-            max_crit = int(max_crit.text())
-            if is_crits_on and min_crit and max_crit:
-                if int(min_crit) != min_crit or int(max_crit) != max_crit or min_crit < 0:
-                    QMessageBox.warning(self, 'Настройка',
-                                        'В числовых значениях критериев могут присутствовать исключительно натуральные числа и 0!')
-                    return
-                if max_crit <= 0:
-                    QMessageBox.warning(self, 'Настройка',
-                                        'Максимальное значение критерия может быть исключительно натуральным!')
-                    return
-                if min_crit > 0:
-                    while min_crit > 0:
-                        min_crit -= 1
-                        max_crit -= 1
-                    QMessageBox.information(self, 'Настройка',
-                                            f'Вы выбрали ненулевое значение минимального значения критерия. '
-                            f'Для правильного подсчёта результатов минимальное значение теперь будет равно {min_crit}, '
-                                            f'а максимальное значение будет равно {max_crit}')
-                    self.cur.execute('UPDATE settings'
-                                     ' SET crit_min = ?, crit_max = ?',
-                                     (min_crit, max_crit,))
-        except ValueError:
-            pass
+        is_crits_on, is_quotes_on, is_graph_on = (self.is_crits_on.isChecked(), self.is_quotes_on.isChecked(),
+                                                            self.is_graph_on.isChecked())
         is_crits_on = 1 if self.is_crits_on.isChecked() else 0
         is_quotes_on = 1 if self.is_quotes_on.isChecked() else 0
         is_graph_on = 1 if self.is_graph_on.isChecked() else 0
@@ -926,6 +909,77 @@ class OmniTracker(QMainWindow):
 ' SET is_crits_on = ?, is_quotes_on = ?, is_graph_on = ?',(is_crits_on, is_quotes_on, is_graph_on))
         self.con.commit()
         self.current_settings = self.cur.execute('SELECT * FROM settings').fetchone()
+        self.open('se')
+
+    def add_crit(self):
+        """Функция для добавления критерия"""
+        try:
+            if not self.max_crit.text() or not self.min_crit.text():
+                QMessageBox.warning(self, 'Настройки', 'Заполните минимальное/максимальное значение критерия!')
+                return
+            name_crit = self.name_crit.text()
+            min_crit = int(self.min_crit.text())
+            max_crit = int(self.max_crit.text())
+            if min_crit < 0:
+                QMessageBox.warning(self, 'Настройка',
+                                    'Минимальное значение критерия должно быть больше нуля и быть натуральным!')
+                return
+            if max_crit <= 0:
+                QMessageBox.warning(self, 'Настройка',
+                                    'Максимальное значение критерия может быть исключительно натуральным!')
+                return
+            if min_crit >= max_crit:
+                QMessageBox.warning(self, 'Настройка',
+                                    'Минимальное значение критерия не должно быть равно или больше максимального!')
+                return
+            if min_crit > 0:
+                while min_crit > 0:
+                    min_crit -= 1
+                    max_crit -= 1
+                QMessageBox.information(self, 'Настройка',
+                                        f'Вы выбрали ненулевое значение минимального значения критерия. '
+                        f'Для правильного подсчёта результатов минимальное значение теперь будет равно {min_crit}, '
+                                        f'а максимальное значение будет равно {max_crit}')
+                self.cur.execute('INSERT INTO settings(name, crit_min, crit_max)'
+                                 ' VALUES(?, ?, ?)' , (name_crit, min_crit, max_crit,))
+        except ValueError:
+            QMessageBox.warning(self, 'Добавление', "Заполните минимальное/максимальное значения"
+                                                    " критериев натуральными цифрами!")
+            return
+        except sqlite3.IntegrityError:
+            QMessageBox.warning(self, 'Добавление', f'Критерий с именем {name_crit}')
+        number_of_existing_criterions = int(self.cur.execute('SELECT COUNT(*) FROM criterions').fetchall()[0][0])
+        if number_of_existing_criterions > 5:
+            QMessageBox.warning(self, 'Добавление', 'Критериев не может быть больше 5! Критерий не был добавлен')
+            return
+
+        self.name_crit.clear()
+        self.min_crit.clear()
+        self.max_crit.clear()
+        self.open('se2')
+        self.con.commit()
+
+    def del_crit(self):
+        """Удаляет критерий"""
+        crit = self.criterions_redact.currentItem()
+        if not crit:
+            QMessageBox.warning(self, 'Удаление', 'Выберите критерий!')
+            return
+        name = crit.text()
+        answer = QMessageBox.question(self, 'Удаление', f'Вы действительно хотите удалить критерий {name}?',
+                                      QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        if answer != QMessageBox.StandardButton.No:
+            return
+        self.cur.execute('DELETE FROM criterions WHERE name = ?', (name,))
+        self.con.commit()
+
+    def fill_lineedits_settings(self):
+        """Заполняет QLineEdit в настройках"""
+        name = self.criterions_redact.currentItem().text()
+        crit = self.cur.execute("SELECT * FROM criterions WHERE name = ?", (name,)).fetchone()
+        self.name_crit.setText(crit[0])
+        self.min_crit.setText(str(crit[1]))
+        self.max_crit.setText(str(crit[2]))
 
 if __name__ == '__main__':
     app = QApplication(argv)
