@@ -2125,7 +2125,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
          </font>
         </property>
         <property name="text">
-         <string>Добавить/переписать критерий</string>
+         <string>Добавить критерий</string>
         </property>
        </widget>
       </item>
