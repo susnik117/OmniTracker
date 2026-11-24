@@ -1220,7 +1220,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <rect>
        <x>30</x>
        <y>80</y>
-       <width>431</width>
+       <width>687</width>
        <height>511</height>
       </rect>
      </property>
@@ -1277,11 +1277,11 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <widget class="QCheckBox" name="is_graph_on">
         <property name="font">
          <font>
-          <pointsize>11</pointsize>
+          <pointsize>9</pointsize>
          </font>
         </property>
         <property name="text">
-         <string>Включить график</string>
+         <string>Включить график (Чтобы изменения вступили в силу, необходимо перезапустить OmniTracker)</string>
         </property>
        </widget>
       </item>
@@ -1320,7 +1320,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       </font>
      </property>
      <property name="text">
-      <string>Чтобы изменения вступили в силу, необходимо перезапустить OmniTracker</string>
+      <string/>
      </property>
     </widget>
    </widget>
@@ -1358,9 +1358,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <property name="geometry">
       <rect>
        <x>0</x>
-       <y>150</y>
+       <y>60</y>
        <width>791</width>
-       <height>471</height>
+       <height>561</height>
       </rect>
      </property>
      <property name="styleSheet">
@@ -1978,24 +1978,6 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <string>Название:</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="addtbn_todo_4">
-     <property name="geometry">
-      <rect>
-       <x>50</x>
-       <y>520</y>
-       <width>191</width>
-       <height>61</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>20</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>ДОБАВИТЬ</string>
-     </property>
-    </widget>
     <widget class="QCheckBox" name="checkBox_6">
      <property name="geometry">
       <rect>
@@ -2055,7 +2037,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <rect>
        <x>200</x>
        <y>80</y>
-       <width>258</width>
+       <width>301</width>
        <height>531</height>
       </rect>
      </property>
@@ -2125,7 +2107,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
          </font>
         </property>
         <property name="text">
-         <string>Добавить критерий</string>
+         <string>Добавить/изменить критерий</string>
         </property>
        </widget>
       </item>
@@ -2149,11 +2131,193 @@ li.checked::marker { content: &quot;\2612&quot;; }
          </font>
         </property>
         <property name="text">
-         <string>Очистить поля ввода</string>
+         <string>Очистить поля ввода/составить новый критерий</string>
         </property>
        </widget>
       </item>
      </layout>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="settings_quotes">
+    <property name="geometry">
+     <rect>
+      <x>820</x>
+      <y>0</y>
+      <width>791</width>
+      <height>621</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string/>
+    </property>
+    <widget class="QLabel" name="label_23">
+     <property name="geometry">
+      <rect>
+       <x>270</x>
+       <y>0</y>
+       <width>391</width>
+       <height>71</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>48</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Цитаты</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_24">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>180</y>
+       <width>161</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>20</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Название:</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="checkBox_7">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>450</y>
+       <width>291</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Выбрать уже существующую задачу</string>
+     </property>
+    </widget>
+    <widget class="QWidget" name="gridLayoutWidget_6">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>230</y>
+       <width>281</width>
+       <height>201</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_7"/>
+    </widget>
+    <widget class="QListView" name="listView_13">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>70</y>
+       <width>791</width>
+       <height>551</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QListView {
+    background-color: #666;
+}</string>
+     </property>
+    </widget>
+    <widget class="QListWidget" name="quotes_redact">
+     <property name="geometry">
+      <rect>
+       <x>15</x>
+       <y>80</y>
+       <width>221</width>
+       <height>531</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QWidget" name="verticalLayoutWidget_3">
+     <property name="geometry">
+      <rect>
+       <x>520</x>
+       <y>80</y>
+       <width>263</width>
+       <height>531</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <widget class="QPushButton" name="add_quote_btn">
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Добавить/изменить цитату</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="del_quote_btn">
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Удалить выбранную цитату</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="clear_quotes">
+        <property name="font">
+         <font>
+          <pointsize>9</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Очистить поля ввода/составить новую цитату</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QLineEdit" name="new_quote">
+     <property name="geometry">
+      <rect>
+       <x>244</x>
+       <y>290</y>
+       <width>271</width>
+       <height>111</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_8">
+     <property name="geometry">
+      <rect>
+       <x>330</x>
+       <y>250</y>
+       <width>101</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>20</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Цитата:</string>
+     </property>
     </widget>
    </widget>
   </widget>
