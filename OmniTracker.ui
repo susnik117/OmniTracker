@@ -1067,7 +1067,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       </font>
      </property>
      <property name="text">
-      <string>Имя задачи:</string>
+      <string>Название:</string>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_5">
@@ -1220,7 +1220,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <rect>
        <x>30</x>
        <y>80</y>
-       <width>687</width>
+       <width>730</width>
        <height>511</height>
       </rect>
      </property>
@@ -1282,6 +1282,42 @@ li.checked::marker { content: &quot;\2612&quot;; }
         </property>
         <property name="text">
          <string>Включить график (Чтобы изменения вступили в силу, необходимо перезапустить OmniTracker)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_2">
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Экспортировать результаты графика</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_4">
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Импортировать результаты графика</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="hot_keys">
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Включить горячие клавиши</string>
         </property>
        </widget>
       </item>
@@ -2319,6 +2355,74 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <string>Цитата:</string>
      </property>
     </widget>
+   </widget>
+   <widget class="QLabel" name="status">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>331</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="criterion1">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>80</y>
+      <width>80</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="criterion2">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>133</y>
+      <width>80</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="criterion3">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>186</y>
+      <width>80</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="criterion4">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>239</y>
+      <width>80</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="criterion5">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>292</y>
+      <width>80</width>
+      <height>22</height>
+     </rect>
+    </property>
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
