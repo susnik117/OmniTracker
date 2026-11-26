@@ -1,16 +1,13 @@
 from sys import argv, exit
 from io import StringIO
-from PyQt6.QtWidgets import QMainWindow, QListWidgetItem, QApplication, QMessageBox
-from PyQt6.QtGui import QColor, QBrush
+from PyQt6.QtWidgets import QMainWindow, QListWidgetItem, QApplication, QMessageBox, QColorDialog
+from PyQt6.QtGui import QColor, QBrush, QTextCharFormat
 from PyQt6.QtCore import QTime, QDate, Qt
 from PyQt6 import uic
 import sqlite3
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 
-
-# TODO: сделать так, чтобы если в планировщике в каком-либо дне есть задачи, то этот день будет окрашиваться в
-#  выбранный пользователем цвет
 
 # TODO: поправить дизайн (исправить графическую ошибку с расположением виджетов)
 
@@ -74,6 +71,8 @@ class OmniTracker(QMainWindow):
         self.menu_5.aboutToShow.connect(lambda: self.menu_clicked('se'))
 
         # --------------Привязка кнопок---------------------
+        self.color_for_day.clicked.connect(self.set_date_color)
+
         self.diarybtn_todo.clicked.connect(lambda: self.open('d'))  # для перемещения между инструментами в вкладках "+"
         self.diarybtn_schedule.clicked.connect(lambda: self.open('d'))
         self.todobtn_diary.clicked.connect(lambda: self.open('t'))
@@ -234,6 +233,7 @@ class OmniTracker(QMainWindow):
                 self.show_tasks('d2')
             case 'sch':
                 self.schedule.show()
+                self.apply_date_colors()
                 crits_db = self.cur.execute('SELECT name FROM criterions ORDER BY id')
                 self.tasks_criterions_schedule.clear()
                 for line, crit in zip(crits_db, self.crits):
@@ -242,6 +242,7 @@ class OmniTracker(QMainWindow):
                     self.tasks_criterions_schedule.addItem('\n')
             case 'sch2':
                 self.schedule_2.show()
+                self.apply_date_colors()
                 self.show_tasks('sch2')
             case 'se':
                 self.settings.show()
@@ -641,6 +642,19 @@ class OmniTracker(QMainWindow):
                         self.crits_schedule.addItem(f'{i[0]}:\n   {num}')
                     self.crits_schedule.addItem(f'Суммарно:\n   {summa}')
 
+    def apply_date_colors(self):
+        """Показывает цвета для календаря"""
+        rows = self.cur.execute("""SELECT date, color_of_day_schedule FROM results
+        WHERE color_of_day_schedule IS NOT NULL AND color_of_day_schedule != ''""").fetchall()
+        for date_str, color_str in rows:
+            qdate = QDate.fromString(date_str, 'dd-MM-yyyy')
+            r, g, b = (int(x.strip()) for x in color_str.split(','))
+            color = QColor(r, g, b)
+            fmt = QTextCharFormat()
+            fmt.setBackground(QBrush(color))
+            self.calendarWidget.setDateTextFormat(qdate, fmt)
+            self.calendarWidget_2.setDateTextFormat(qdate, fmt)
+
     # ---------------------------------------Работа с задачами---------------------------------------
 
     def delete_tasks(self, tool_type):
@@ -833,7 +847,7 @@ class OmniTracker(QMainWindow):
                 days = self.cur.execute("SELECT date FROM results").fetchall()
                 in_results = False
                 for i in days:
-                    if self.qtoday == ''.join(i):  # проверяем, что сегодняшней даты в таблице нет
+                    if self.qtoday == ''.join(i):  # проверяем, что сегодняшняя дата есть в таблице
                         self.cur.execute("""UPDATE results SET points = points + ? 
                                                                             WHERE date = ?""",
                                          (schedule_points, self.qtoday))
@@ -860,9 +874,11 @@ class OmniTracker(QMainWindow):
         """Отрисовка данных"""
         figure.clear()
         ax = figure.add_subplot(111)
-        results = self.cur.execute("""SELECT date, points FROM results
-          ORDER BY substr(date, 7, 4) || '-' || substr(date, 4, 2) || '-' || substr(date, 1, 2)""").fetchall()
-
+        try:
+            results = self.cur.execute("""SELECT date, points FROM results
+              ORDER BY substr(date, 7, 4) || '-' || substr(date, 4, 2) || '-' || substr(date, 1, 2)""").fetchall()
+        except TypeError:
+            return
         monday = self.todays.addDays(-(int(self.today_weekday) - 1) + 7 * self.week_offset)
         sunday = monday.addDays(6)
         sunday_str = sunday.toString('dd-MM-yyyy')
@@ -1042,6 +1058,7 @@ class OmniTracker(QMainWindow):
                 self.new_quote.setText('')
 
     def add_or_redo_quote(self):
+        """Добавляет или изменяет цитату"""
         if not self.new_quote.text():
             QMessageBox.warning(self, 'Добавление', 'Поле ввода цитат пусто!')
             return
@@ -1067,6 +1084,7 @@ class OmniTracker(QMainWindow):
         self.con.commit()
 
     def del_quote(self):
+        """Удаляет цитату"""
         if not self.quotes_redact.currentItem():
             QMessageBox.warning(self, 'Удаление', "Выберите цитату!")
             return
@@ -1083,6 +1101,22 @@ class OmniTracker(QMainWindow):
         self.new_quote.clear()
         self.con.commit()
 
+    def set_date_color(self):
+        date = QDate.toString(self.calendarWidget.selectedDate(), 'dd-MM-yyyy')
+        color = QColorDialog.getColor(QColor("gray"), self, f"Выберите цвет для {date}")
+        if color.isValid():
+            c = f'{color.red()}, {color.green()}, {color.blue()}'
+
+            row = self.cur.execute("SELECT 1 FROM results WHERE date = ?", (date, )).fetchone()
+            if row:
+                self.cur.execute("""UPDATE results SET color_of_day_schedule = ? WHERE date = ?""",
+                                 (c, date))
+            else:
+                self.cur.execute("INSERT INTO results(date, points, color_of_day_schedule) VALUES(?, 0, ?)",
+                                 (date, c))
+
+            self.con.commit()
+            self.apply_date_colors()
 
 if __name__ == '__main__':
     app = QApplication(argv)

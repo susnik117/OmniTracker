@@ -987,7 +987,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <property name="geometry">
        <rect>
         <x>5</x>
-        <y>420</y>
+        <y>400</y>
         <width>191</width>
         <height>61</height>
        </rect>
@@ -1042,6 +1042,19 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <string>Удалить</string>
       </property>
      </widget>
+     <widget class="QPushButton" name="color_for_day">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>465</y>
+        <width>171</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Выбрать цвет дня</string>
+      </property>
+     </widget>
      <zorder>tasks_criterions_schedule</zorder>
      <zorder>exist_tasks_schedule</zorder>
      <zorder>addbtn_schedule</zorder>
@@ -1051,6 +1064,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <zorder>schedulebtn_schedule</zorder>
      <zorder>timeEdit</zorder>
      <zorder>delbtn_schedule</zorder>
+     <zorder>color_for_day</zorder>
     </widget>
     <widget class="QLabel" name="label_22">
      <property name="geometry">
@@ -1306,18 +1320,6 @@ li.checked::marker { content: &quot;\2612&quot;; }
         </property>
         <property name="text">
          <string>Импортировать результаты графика</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="hot_keys">
-        <property name="font">
-         <font>
-          <pointsize>11</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>Включить горячие клавиши</string>
         </property>
        </widget>
       </item>
