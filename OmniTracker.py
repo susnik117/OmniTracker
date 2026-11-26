@@ -1,7 +1,7 @@
 from sys import argv, exit
 from io import StringIO
 from PyQt6.QtWidgets import QMainWindow, QListWidgetItem, QApplication, QMessageBox
-from PyQt6.QtGui import QColor, QBrush, QShortcut, QKeySequence
+from PyQt6.QtGui import QColor, QBrush
 from PyQt6.QtCore import QTime, QDate, Qt
 from PyQt6 import uic
 import sqlite3
