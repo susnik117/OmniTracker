@@ -14,12 +14,17 @@ from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 # TODO: расширить настройки: добавить возможность стирать информацию о днях в графике и экспортировать/импортировать
 #  данные с графиков
 
+# TODO: добавить возможность сортировки заданий
+
 # TODO: сделать так, чтобы можно было отключить рандомизацию цитат
 
 # TODO: сделать так, чтобы дни у ежедневника съехали туда, где у двух других инструментов критерии
 
 # TODO: добавить возможность добавления описания
 
+# TODO: добавить README
+
+# TODO: добавить exe-шник и requirments.txt
 
 class OmniTracker(QMainWindow):
     """Класс, выполняющий функционал приложения"""
@@ -30,7 +35,7 @@ class OmniTracker(QMainWindow):
         with open('OmniTracker.ui', 'r', encoding='utf8') as f:
             ui_data = f.read()
             uic.loadUi(StringIO(ui_data), self)
-        self.setFixedHeight(662)
+        self.setFixedHeight(621)
         self.setFixedWidth(791)
         self.setWindowTitle('OmniTracker')
         self.today_weekday = str(QDate.currentDate().dayOfWeek())
@@ -99,7 +104,7 @@ class OmniTracker(QMainWindow):
 
         self.cb_todo.stateChanged.connect(lambda: self.show_tasks('t'))  # для показа задач в окне "+"
         self.cb_diary.stateChanged.connect(lambda: self.show_tasks('d'))
-        self.show_all_tasks.stateChanged.connect(lambda: self.show_tasks('d22'))
+        self.show_all_tasks_diary.stateChanged.connect(lambda: self.show_tasks('d22'))
         self.cb_schedule.stateChanged.connect(lambda: self.show_tasks('sch'))
         self.calendarWidget.clicked.connect(lambda: self.show_tasks('sch'))
         self.calendarWidget_2.clicked.connect(lambda: self.show_tasks('sch2'))
@@ -172,7 +177,7 @@ class OmniTracker(QMainWindow):
         self.cb_todo.setChecked(False)
         self.cb_schedule.setChecked(False)
         self.cb_diary.setChecked(False)
-        self.show_all_tasks.setChecked(False)
+        self.show_all_tasks_diary.setChecked(False)
 
         self.exist_tasks_todo.clear()
         self.exist_tasks_diary.clear()
@@ -492,7 +497,7 @@ class OmniTracker(QMainWindow):
 
             elif tool_type == 'd22':  # показать все задачи в основном окне
                 self.tasks_diary.clear()
-                if self.show_all_tasks.isChecked():
+                if self.show_all_tasks_diary.isChecked():
                     for task in rdr_diary:
                         if task[1] == self.qtoday or self.today_weekday not in task[2]:
                             item = QListWidgetItem(task[0])
@@ -821,7 +826,7 @@ class OmniTracker(QMainWindow):
             self.cur.execute("UPDATE diary SET date_of_complete = ? WHERE name = ?",
                              (self.qtoday, task.text()))
             self.con.commit()
-            self.show_all_tasks.setChecked(False)
+            self.show_all_tasks_diary.setChecked(False)
             self.show_tasks('d2')
 
         elif tool_type == 'd22':  # если надо отменить выполнение задачи из ежедневника
@@ -831,7 +836,7 @@ class OmniTracker(QMainWindow):
                 return
             self.cur.execute("UPDATE diary SET date_of_complete = '' WHERE name = ?", (task.text(),))
             self.con.commit()
-            self.show_all_tasks.setChecked(False)
+            self.show_all_tasks_diary.setChecked(False)
             self.show_tasks('d2')
 
         elif tool_type == 'sch':  # если это планировщик
