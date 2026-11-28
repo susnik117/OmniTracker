@@ -9,18 +9,16 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 
 
-# TODO: поправить дизайн (исправить графическую ошибку с расположением виджетов)
-
 # TODO: расширить настройки: добавить возможность стирать информацию о днях в графике и экспортировать/импортировать
 #  данные с графиков
 
-# TODO: добавить возможность сортировки заданий
+# TODO: добавить возможность сортировки заданий (и ещё вывод заданий в планировщике обычном окне)
 
 # TODO: сделать так, чтобы можно было отключить рандомизацию цитат
 
-# TODO: сделать так, чтобы дни у ежедневника съехали туда, где у двух других инструментов критерии
+# TODO: начать запрашивать разрешение у пользователя когда он выполняет задание
 
-# TODO: добавить возможность добавления описания
+# TODO: добавить описания
 
 # TODO: добавить README
 
@@ -35,7 +33,7 @@ class OmniTracker(QMainWindow):
         with open('OmniTracker.ui', 'r', encoding='utf8') as f:
             ui_data = f.read()
             uic.loadUi(StringIO(ui_data), self)
-        self.setFixedHeight(621)
+        self.setFixedHeight(677)
         self.setFixedWidth(791)
         self.setWindowTitle('OmniTracker')
         self.today_weekday = str(QDate.currentDate().dayOfWeek())
@@ -78,12 +76,20 @@ class OmniTracker(QMainWindow):
         # --------------Привязка кнопок---------------------
         self.color_for_day.clicked.connect(self.set_date_color)
 
-        self.diarybtn_todo.clicked.connect(lambda: self.open('d'))  # для перемещения между инструментами в вкладках "+"
-        self.diarybtn_schedule.clicked.connect(lambda: self.open('d'))
         self.todobtn_diary.clicked.connect(lambda: self.open('t'))
         self.todobtn_schedule.clicked.connect(lambda: self.open('t'))
+        self.diarybtn_todo.clicked.connect(lambda: self.open('d'))  # для перемещения между инструментами в вкладках "+"
+        self.diarybtn_schedule.clicked.connect(lambda: self.open('d'))
         self.schedulebtn_todo.clicked.connect(lambda: self.open('sch'))
         self.schedulebtn_diary.clicked.connect(lambda: self.open('sch'))
+
+        self.todobtn_diary_3.clicked.connect(lambda: self.open('t2'))
+        self.todobtn_schedule_2.clicked.connect(lambda: self.open('t2'))
+        self.diarybtn_todo_2.clicked.connect(lambda: self.open('d2'))
+        self.diarybtn_schedule_2.clicked.connect(lambda: self.open('d2'))
+        self.schedulebtn_todo_2.clicked.connect(lambda: self.open('sch2'))
+        self.schedulebtn_diary_3.clicked.connect(lambda: self.open('sch2'))
+
 
         self.plus_to_normal_todo.clicked.connect(lambda: self.open('t2'))  # для перемещения между окнами "+" и обычным
         self.plus_to_normal_diary.clicked.connect(lambda: self.open('d2'))
@@ -263,7 +269,7 @@ class OmniTracker(QMainWindow):
                 self.criterions_redact.clear()
                 crits = self.cur.execute("""SELECT * FROM criterions""").fetchall()
                 for c in crits:
-                    self.criterions_redact.addItem(f'{c[1]} ({c[2]} - {c[3]})')
+                    self.criterions_redact.addItem(f'{c[1]} ({int(c[2]) + 1} - {c[3]})')
             case 'se3':
                 self.settings_quotes.show()
                 self.quotes_redact.clear()
@@ -1045,7 +1051,7 @@ class OmniTracker(QMainWindow):
                 name = ' '.join(self.criterions_redact.currentItem().text().split()[:-3])
                 crit = self.cur.execute("SELECT * FROM criterions WHERE name = ?", (name,)).fetchone()
                 self.name_crit.setText(crit[1])
-                self.min_crit.setText(str(crit[2]))
+                self.min_crit.setText(str(crit[2] + 1))
                 self.max_crit.setText(str(crit[3]))
             else:  # если надо заполнять цитаты
                 name = ' '.join(self.quotes_redact.currentItem().text().split()[1:-1])
